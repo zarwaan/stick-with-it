@@ -3,7 +3,7 @@ import { useRef, useState } from "react"
 
 export default function NavBar() {
     // const [left, setLeft] = useState("0%")
-    const navBarRef = useRef(null);
+    const [pos, setPos] = useState(0)
 
     const NavButtonConfig = {
         habits: {
@@ -11,16 +11,16 @@ export default function NavBar() {
             number: 0,
             onclick: () => {
                         //open habits section
-                        console.log("hello")
-                        navBarRef.current.style.setProperty("--left","0%")
+                        console.log("Habits")
+                        setPos(0);
                     }
         },
         graph: {
             name: "Graph",
             number: 1,
             onclick: () => {
-                        console.log("hello")
-                        navBarRef.current.style.setProperty("--left","100%")
+                        console.log("Graph")
+                        setPos(1);
                         //open graph section
                     }
         },
@@ -28,8 +28,8 @@ export default function NavBar() {
             name: "Calendar",
             number: 2,
             onclick: () => {
-                        console.log("hello")
-                        navBarRef.current.style.setProperty("--left","200%")
+                        console.log("Calendar")
+                        setPos(2);
                         //open calendar section
                     }
         },
@@ -37,19 +37,19 @@ export default function NavBar() {
             name: "At a glance",
             number: 3,
             onclick: () => {
-                        console.log("hello")
-                        navBarRef.current.style.setProperty("--left","300%")
+                        console.log("At a glance")
+                        setPos(3);
                         //open at a glance section
                     }
         }
     }
 
     return (
-        <div className="bord flex flex-row w-[80%] m-auto rounded-full p-1" style={{'--left':'0%'}} ref={navBarRef}>
+        <div className="bord flex flex-row w-[60%] m-auto rounded-full p-1 bg-indigo-100">
             {
                 Object.keys(NavButtonConfig).map((button,index)=>{
                     return(
-                        <NavButton button={NavButtonConfig[button]} key={index}></NavButton>
+                        <NavButton button={NavButtonConfig[button]} key={index} pos={pos} setPos={setPos}></NavButton>
                     )
                 })
             }
