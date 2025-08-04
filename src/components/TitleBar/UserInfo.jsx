@@ -12,7 +12,7 @@ export default function UserInfo(){
             <button className="flex flex-row font-semibold gap-1 text-xl text-emerald-900 cursor-pointer"
                     onClick={() => {setShowProfile(showProfile => !showProfile)}}>
                 <span className="underline">{userData.name}</span>
-                <i class="bi bi-person-circle"></i>
+                <i className="bi bi-person-circle"></i>
             </button>
             <AnimatePresence initial={false}>
                 {showProfile && 

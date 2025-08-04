@@ -3,49 +3,39 @@ import NavButton from "./NavButton"
 import { useRef, useState } from "react"
 
 export default function NavBar() {
-    // const [left, setLeft] = useState("0%")
-    // const [pos, setPos] = useState(0)
-    const {setView, pos, setPos} = useViewContext()
+    const {showGlanceView, showCalendarView, showGraphView, showHabitsView} = useViewContext();
 
     const NavButtonConfig = {
         habits: {
             name: "Habits",
             number: 0,
             onclick: () => {
-                        //open habits section
-                        setView("habits")
+                        showHabitsView();
                         console.log("Habits")
-                        setPos(0);
                     }
         },
         graph: {
             name: "Graph",
             number: 1,
             onclick: () => {
-                        setView("graph")
+                        showGraphView();
                         console.log("Graph")
-                        setPos(1);
-                        //open graph section
                     }
         },
         calendar: {
             name: "Calendar",
             number: 2,
             onclick: () => {
-                        setView("calendar")
+                        showCalendarView();
                         console.log("Calendar")
-                        setPos(2);
-                        //open calendar section
                     }
         },
         atAGlance: {
             name: "At a glance",
             number: 3,
             onclick: () => {
-                        setView("glance")
+                        showGlanceView();
                         console.log("At a glance")
-                        setPos(3);
-                        //open at a glance section
                     }
         }
     }
