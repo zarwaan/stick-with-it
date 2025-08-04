@@ -51,7 +51,7 @@ export default function NavBar() {
     }
 
     return (
-        <div className="bord flex flex-row w-[60%] m-auto rounded-full p-1 bg-indigo-100 mb-3">
+        <div className="bord flex flex-row w-[60%] m-auto rounded-full p-1 bg-emerald-100 mb-3">
             {
                 Object.keys(NavButtonConfig).map((button,index)=>{
                     return(
