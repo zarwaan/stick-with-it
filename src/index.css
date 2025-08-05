@@ -22,10 +22,49 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  background-color: #c4ffe41d;
+  background-color: #1b9f641d;
 }
 
 .bord {
   border-width: 1px;
   border-color: black;
 }
+
+* {
+  outline: none !important;
+}
+
+.flex-center{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#habit-list::-webkit-scrollbar-track {
+	background: none !important;
+}
+
+#habit-list::-webkit-scrollbar {
+  width: 7px;
+}
+
+#habit-list::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3); /* or make this transparent too */
+  border-radius: calc(1px * infinity);
+  opacity: 0;
+}
+
+#habit-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.6); 
+}
+
+#habit-list::-webkit-scrollbar-track-piece:end {
+  margin-right: 100px; 
+}
+
+#habit-list::-webkit-scrollbar-track-piece:start {
+  margin-left: 100px; 
+}
+/* .border{
+  border: none !important;
+} */

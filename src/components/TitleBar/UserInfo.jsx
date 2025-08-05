@@ -16,7 +16,7 @@ export default function UserInfo(){
             </button>
             <AnimatePresence initial={false}>
                 {showProfile && 
-                <motion.div initial={{opacity:0, y:0}} animate={{opacity:1, y:12}} exit={{ opacity: 0, y:0 }} transition={{duration: 0.3}}>
+                <motion.div className="" initial={{opacity:0, y:0}} animate={{opacity:1, y:12}} exit={{ opacity: 0, y:0 }} transition={{duration: 0.3}}>
                     <ProfileInfo></ProfileInfo>
                 </motion.div>}
             </AnimatePresence>

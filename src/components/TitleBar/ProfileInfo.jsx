@@ -3,7 +3,7 @@ import { useAuthContext } from "../../providers/AuthProvider"
 export default function ProfileInfo(){
     const {userData, logout} = useAuthContext();
     return (
-        <div className="w-[150%] aspect-3/2 border absolute right-0 rounded-xl flex flex-col text-lg 
+        <div className="w-[150%] aspect-3/2 border absolute right-0 p-2 rounded-xl flex flex-col text-lg items-center
                         gap-1 bg-[rgba(240,255,248,1)]">
             <div className="">{userData.name}</div>
             <div className="">{userData.email}</div>
