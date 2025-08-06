@@ -1,25 +1,31 @@
 let id = 1;
 
 class Habit {
-    constructor(title, emoji) {
+    constructor(title, emoji, dayArray) {
+        this.id = id++;
         this.title = title;
         this.emoji = emoji;
-        this.id = id++;
+        this.dayArray = dayArray;
     }
 }
 
-const ReadBook = new Habit("Read a book","📖")
-const Exercise = new Habit("Exercise","💪")
-const Brush = new Habit("Brush teeth","🪥")
-const Bathe = new Habit("Take a bath","🛁")
-const Study = new Habit("Study","🧠")
-const Code = new Habit("Code", "💻")
-const Meditate = new Habit("Meditate", "🧘‍♂️")
-const Dance = new Habit("Dance", "💃")
+// [Mon, Tue, Wed, Thurs, Fri, Sat, Sun]
+const weekdays = [1,1,1,1,1,0,0]
+const weekends = [0,0,0,0,0,1,1]
+const everyday = new Array(7).fill(1);
 
-export const todayHabits = [
-    Brush, Bathe, Exercise
-]
+const ReadBook = new Habit("Read a book","📖",weekends)
+const Exercise = new Habit("Exercise","💪",weekdays)
+const Brush = new Habit("Brush teeth","🪥",everyday)
+const Bathe = new Habit("Take a bath","🛁",everyday)
+const Study = new Habit("Study","🧠",weekdays)
+const Code = new Habit("Code", "💻",[0,1,0,1,0,1,1])
+const Meditate = new Habit("Meditate", "🧘‍♂️",weekends)
+const Dance = new Habit("Dance", "💃",[0,0,1,0,0,1,1])
+
+// export const todayHabits = [
+//     Brush, Bathe, Exercise
+// ]
 
 export const allHabits = [
     ReadBook, Exercise, Brush, Bathe, Study, Code, Meditate, Dance 
