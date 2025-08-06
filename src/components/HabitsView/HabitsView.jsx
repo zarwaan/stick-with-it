@@ -5,9 +5,10 @@ import { useHabitContext } from "../../providers/HabitProvider"
 import Habit from "./Habit";
 import { week, weekAbbr, weekSingleLetter, today } from "../../helpers/calendar";
 import { AnimatePresence, motion} from "motion/react";
+import HabitDetails from "./HabitDetails";
 
 export default function HabitsView() {
-    const {showAll, currentHabitView, closeHabit, sideBarOpen} = useHabitContext();
+    const {showAll, sideBarOpen} = useHabitContext();
 
     return (
         <div className="flex flex-col p-2 h-full gap-3">
@@ -40,31 +41,22 @@ export default function HabitsView() {
                 </div>
 
                 <AnimatePresence initial={false}>
-                {
-
-                    sideBarOpen ? (
-                    <motion.div className="p-3 w-0 border flex flex-col"
-                                initial={{padding: "none", width: "0%", border: "none"}}
-                                animate={{padding: "calc(var(--spacing) * 3)", width: "35%", border: "1px solid black"}}
-                                exit={{padding: "none", width: "0%", border: "none"}}
-                                transition={{duration: 0.3, ease: "easeOut"}}>
-                        <div className="border">
-                            <button onClick={() => closeHabit()} className="border-2 border-red-600"><i className="bi bi-x"></i></button>
-                        </div>
-                        <div>
-                            {
-                            currentHabitView ? 
-                            currentHabitView.emoji + " " + currentHabitView.title 
-                            : 
-                            "No Habit Selected"
-                            }
-                        </div>
-                    </motion.div> ) 
-                    :
-                    null
-                }
-                    </AnimatePresence>
+                    {
+                        sideBarOpen ? (
+                        <motion.div className="p-0 w-0 border flex flex-col"
+                                    initial={{padding: "none", width: "0%", border: "none"}}
+                                    animate={{padding: "", width: "35%", border: "1px solid black"}}
+                                    exit={{padding: "none", width: "0%", border: "none"}}
+                                    transition={{duration: 0.3, ease: "easeOut"}}>
+                            <HabitDetails></HabitDetails>
+                        </motion.div> ) 
+                        :
+                        null
+                    }
+                </AnimatePresence>
             </div>
         </div>
     )
 }
+
+// calc(var(--spacing) * 3)
