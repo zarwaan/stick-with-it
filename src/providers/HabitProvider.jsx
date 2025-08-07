@@ -4,8 +4,14 @@ const HabitContext = createContext();
 
 export default function HabitProvider({children}) {
     const [showAll, setShowAll] = useState(false)
-    const [currentHabitView, setCurrentHabitView] = useState(null)
+    const [currentHabitView, setCurrentHabitView] = useState({
+        id: 1,
+        title: "Read a book",
+        emoji: "📖",
+        dayArray: [0,0,0,0,0,1,1]
+    })
     const [sideBarOpen, setSideBarOpen] = useState(true)
+    const [editMode, setEditMode] = useState(false)
 
     const openHabit = (habit) => {
         setCurrentHabitView(habit);
@@ -18,7 +24,7 @@ export default function HabitProvider({children}) {
     }
 
     return (
-        <HabitContext.Provider value={{showAll, setShowAll, currentHabitView, sideBarOpen , openHabit, closeHabit}}>
+        <HabitContext.Provider value={{showAll, setShowAll, currentHabitView, sideBarOpen , openHabit, closeHabit, editMode, setEditMode}}>
             {children}
         </HabitContext.Provider>
     )

@@ -18,18 +18,9 @@ export default function HabitsView() {
                 </div>
                 <ShowAllToggle></ShowAllToggle>
             </div>
-            <div className="flex flex-row h-[100%] border-blue-700 overflow-hidden">
+            <div className="flex flex-row h-[100%] border-blue-700 overflow-hidden gap-2">
                 <div className=" border-red-700 pr-3 flex flex-1 flex-col gap-3 h-[100%] overflow-y-scroll" id="habit-list">
                     {
-                        // showAll ? 
-                        // allHabits.map((habit,index) => {
-                        //     return (<Habit key={index} habit={habit}></Habit>)
-                        // })
-                        // :
-                        // todayHabits.map((habit,index) => {
-                        //     return (<Habit key={index} habit={habit}></Habit>)
-                        // })
-
                         allHabits.map((habit, index) => {
                             const todayDaynum = week.indexOf(today)
                             if(habit.dayArray[todayDaynum] || (!habit.dayArray[todayDaynum] && showAll)){
@@ -43,9 +34,9 @@ export default function HabitsView() {
                 <AnimatePresence initial={false}>
                     {
                         sideBarOpen ? (
-                        <motion.div className="p-0 w-0 border flex flex-col"
+                        <motion.div className="p-0 w-0 border flex flex-col rounded-xl "
                                     initial={{padding: "none", width: "0%", border: "none"}}
-                                    animate={{padding: "", width: "35%", border: "1px solid black"}}
+                                    animate={{padding: "", width: "35%", border: "0px solid black"}}
                                     exit={{padding: "none", width: "0%", border: "none"}}
                                     transition={{duration: 0.3, ease: "easeOut"}}>
                             <HabitDetails></HabitDetails>

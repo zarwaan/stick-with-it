@@ -11,7 +11,7 @@ export default function Habit({habit}) {
                         whileTap={{y:2}}
                         onClick={()=>openHabit(habit)}>
             <div className="border- border-green-700 border-5 w-[10%] rounded-full aspect-square flex-center text-3xl">
-                <span className="tex-shadow-[-3px_3px_5px_rgb(0_0_0_/_0.5)]">
+                <span className="text-shadow-[-3px_3px_5px_rgb(0_0_0_/_0.5)]">
                     {habit.emoji}
                 </span>
             </div>
