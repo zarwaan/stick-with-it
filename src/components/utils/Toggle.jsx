@@ -8,7 +8,7 @@ export default function Toggle({widthValue, handleClick}){
     useEffect(()=>{
         if(ref.current){
             setX(ref.current.offsetWidth - 3)
-            console.log(ref.current.offsetWidth);
+            // console.log(ref.current.offsetWidth);
         }
     },[]);
     

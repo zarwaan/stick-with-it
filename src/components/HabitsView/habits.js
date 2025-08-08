@@ -7,6 +7,18 @@ class Habit {
         this.emoji = emoji;
         this.dayArray = dayArray;
     }
+
+    updateDays(days){
+        this.dayArray = days;
+    }
+
+    clearHabit(arr){
+        this.title = null;
+        this.emoji = null;
+        this.dayArray = null;
+        const index = arr.findIndex(h => h.id === this.id)
+        if(index>-1) arr.splice(index,1);
+    }
 }
 
 // [Mon, Tue, Wed, Thurs, Fri, Sat, Sun]
@@ -22,10 +34,6 @@ const Study = new Habit("Study","🧠",weekdays)
 const Code = new Habit("Code", "💻",[0,1,0,1,0,1,1])
 const Meditate = new Habit("Meditate", "🧘‍♂️",weekends)
 const Dance = new Habit("Dance", "💃",[0,0,1,0,0,1,1])
-
-// export const todayHabits = [
-//     Brush, Bathe, Exercise
-// ]
 
 export const allHabits = [
     ReadBook, Exercise, Brush, Bathe, Study, Code, Meditate, Dance 

@@ -1,4 +1,5 @@
 import { createContext, useContext, useState } from "react";
+import { allHabits } from "../components/HabitsView/habits";
 
 const HabitContext = createContext();
 
@@ -19,7 +20,7 @@ export default function HabitProvider({children}) {
     };
 
     const closeHabit = () => {
-        setCurrentHabitView(null);
+        // setCurrentHabitView(null);
         setSideBarOpen(false);
     }
 

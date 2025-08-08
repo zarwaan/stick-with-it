@@ -3,9 +3,17 @@ import { useHabitContext } from "../../providers/HabitProvider"
 import { motion } from "motion/react";
 import { week } from "../../helpers/calendar";
 import MarkedDay from "./MarkedDay";
+import { useEffect, useState } from "react";
+import { allHabits } from "./habits";
 
 export default function HabitDetails() {
     const {currentHabitView, closeHabit, editMode, setEditMode} = useHabitContext();
+    const [days, setDays] = useState(currentHabitView.dayArray);
+
+    useEffect(() => {
+        setDays(currentHabitView.dayArray)
+    },[currentHabitView])
+
     return (
         <div className="flex flex-col relative gap-3 p-3 rounded-xl 
                             border-2 border-green-900 bg-green-100
@@ -22,7 +30,7 @@ export default function HabitDetails() {
             {
                 currentHabitView ? (
                 <>
-                    <div className="text-5xl">
+                    <div className="text-5xl text-shadow-[-3px_3px_5px_rgb(0_0_0_/_0.5)]">
                         {currentHabitView.emoji}
                     </div>
                     <div className=" text-3xl font-semibold">
@@ -32,7 +40,13 @@ export default function HabitDetails() {
                         <div className=" h-fit mt-auto mb-auto">Days to practice:</div>
                         <div className=" flex flex-row">
                             <motion.button className=" cursor-pointer rounded-full p-1 aspect-square flex-center" 
-                            onClick={()=>{setEditMode(mode => !mode)}}
+                            onClick={()=>{
+                                setEditMode(mode => !mode)
+                                if(editMode){
+                                    currentHabitView.updateDays(days);
+                                    console.log(allHabits);
+                                }
+                            }}
                             whileHover={{
                                 color: "rgb(255,255,255)",
                                 backgroundColor: "rgba(0, 70, 0, 1)"
@@ -50,7 +64,10 @@ export default function HabitDetails() {
                     <div className=" flex flex-row flex-wrap gap-1">
                         {
                             week.map((day,index)=> 
-                                <MarkedDay key={index} day={day} isMarked={currentHabitView.dayArray[index]}>
+                                <MarkedDay key={index} 
+                                day={day} isMarked={currentHabitView.dayArray[index]}
+                                index={index} days={days}
+                                setDays={setDays}>
                                 </MarkedDay>
                             )
                         }

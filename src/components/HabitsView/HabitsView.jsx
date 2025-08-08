@@ -6,12 +6,13 @@ import Habit from "./Habit";
 import { week, weekAbbr, weekSingleLetter, today } from "../../helpers/calendar";
 import { AnimatePresence, motion} from "motion/react";
 import HabitDetails from "./HabitDetails";
+import CreateNewButton from "./CreateNewButton";
 
 export default function HabitsView() {
     const {showAll, sideBarOpen} = useHabitContext();
 
     return (
-        <div className="flex flex-col p-2 h-full gap-3">
+        <div className="flex flex-col p-2 h-full gap-3 relative">
             <div className="flex flex-row justify-between items-center">
                 <div className="text-3xl font-bold">
                     Your Habits:
@@ -46,6 +47,7 @@ export default function HabitsView() {
                     }
                 </AnimatePresence>
             </div>
+            <CreateNewButton></CreateNewButton>
         </div>
     )
 }
