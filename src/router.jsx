@@ -3,6 +3,7 @@ import Layout from './components/Layout.jsx'
 import Home from './components/Home.jsx'
 import Login from './components/Auth/Login.jsx'
 import Register from './components/Auth/Register.jsx'
+import Error404 from './components/Error404.jsx'
 
 export const router = createBrowserRouter([
 	{
@@ -24,7 +25,11 @@ export const router = createBrowserRouter([
 			{
 				path: 'new-habit',
 				element: <div>New Habit Page (to be added later)</div>
+			},
+			{
+				path: '*',
+				element: <Error404></Error404>
 			}
-		]
+		],
   }
 ]);

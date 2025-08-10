@@ -6,6 +6,7 @@ import InputBox from "./InputBox";
 import SubmitButton from "./SubmitButton";
 import Error from "./Error";
 import { useNavigate } from "react-router-dom";
+import { checkIfEmpty, checkMatch, CheckNameValidity, checkUsernameValidity } from "../../helpers/errorChecks";
 
 export default function Register() {
     const navigate = useNavigate();
@@ -26,11 +27,18 @@ export default function Register() {
     });
 
     const submitForm = () => {
-        if(["firstName", "lastName", "username", "password"].some(field => creds[field] === "")){
+        const [usernameValid,message] = checkUsernameValidity(creds.username);
+        if(checkIfEmpty(creds)){
             setErrorMessage("Please fill all required fields!")
         }
-        else if(creds.password !== creds.rePassword){
+        else if(!checkMatch(creds)){
             setErrorMessage("Passwords dont match!")
+        }
+        else if(!(CheckNameValidity(creds.firstName) && CheckNameValidity(creds.lastName))){
+            setErrorMessage("Names can contain only letters and one hyphen/single quote")
+        }
+        else if(!usernameValid){
+            setErrorMessage(message)
         }
         else{
             console.log("New user:");

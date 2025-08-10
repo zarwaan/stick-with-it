@@ -6,6 +6,7 @@ import AuthLink from "./AuthLink";
 import Error from "./Error";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { checkIfEmpty } from "../../helpers/errorChecks";
 
 export default function Login() {
     const navigate = useNavigate();
@@ -17,8 +18,8 @@ export default function Login() {
     });
 
     const submitForm = () => {
-        if(["username","password"].some(field => creds[field] === "")){
-            setErrorMessage("Please fill all required fields!")
+        if(checkIfEmpty(creds)){
+            setErrorMessage("Please fill all required fields!");
         }
         else{
             console.log("Logged in:")
