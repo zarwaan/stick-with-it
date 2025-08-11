@@ -12,9 +12,9 @@ export default function Register() {
     const navigate = useNavigate();
     const [errorMessage, setErrorMessage] = useState(null);
     
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        if(submitForm())
+        if(await submitForm())
             navigate('/');
     }
 
@@ -26,7 +26,7 @@ export default function Register() {
         rePassword: "",
     });
 
-    const submitForm = () => {
+    const submitForm = async () => {
         const [usernameValid,message] = checkUsernameValidity(creds.username);
         if(checkIfEmpty(creds)){
             setErrorMessage("Please fill all required fields!")
@@ -41,9 +41,27 @@ export default function Register() {
             setErrorMessage(message)
         }
         else{
-            console.log("New user:");
-            console.log(creds);
-            return true;
+            const url = `${import.meta.env.VITE_API_URL_ROOT}/register`;
+            try{
+                const response = await fetch(url,{
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(creds)
+                });
+                const result = await response.json();
+                if(response.ok){
+                    console.log(`${result.message}\nid: ${result.userId}`)
+                    return true;
+                }
+                else{
+                    setErrorMessage(`Server error :(`)
+                }
+            }
+            catch(err){
+                setErrorMessage("Could not send request");
+            }
         }
         return false;
     }

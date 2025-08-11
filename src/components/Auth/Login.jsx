@@ -8,6 +8,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { checkIfEmpty } from "../../helpers/errorChecks";
 
+// dotenv.config();
+
 export default function Login() {
     const navigate = useNavigate();
     const [errorMessage, setErrorMessage] = useState(null);
@@ -17,21 +19,42 @@ export default function Login() {
         password: ""
     });
 
-    const submitForm = () => {
+    const submitForm = async () => {
+
         if(checkIfEmpty(creds)){
             setErrorMessage("Please fill all required fields!");
         }
         else{
-            console.log("Logged in:")
-            console.log(creds);
-            return true;
+            const url = `${import.meta.env.VITE_API_URL_ROOT}/login`
+            console.log(`Make request to ${import.meta.env.VITE_API_URL_ROOT}/login`);
+            // console.log(creds);
+            try{
+                const response = await fetch(url,{
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(creds)
+                });
+                const result = await response.json();
+                if(response.ok){
+                    console.log(result.message)
+                    return true;
+                }
+                else {
+                    setErrorMessage(`${result.message}`)
+                }
+            }
+            catch(err){
+                setErrorMessage("Could not send request");
+            }
         }
         return false;
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        if(submitForm())
+        if(await submitForm())
             navigate('/')
     }
 
