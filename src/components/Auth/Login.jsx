@@ -7,12 +7,14 @@ import Error from "./Error";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { checkIfEmpty } from "../../helpers/errorChecks";
+import { useAuthContext } from "../../providers/AuthProvider";
 
 // dotenv.config();
 
 export default function Login() {
     const navigate = useNavigate();
     const [errorMessage, setErrorMessage] = useState(null);
+    const {login} = useAuthContext();
 
     const [creds, setCreds] = useState({
         username: "",
@@ -34,6 +36,7 @@ export default function Login() {
                     headers: {
                         "Content-Type": "application/json"
                     },
+                    credentials: 'include',
                     body: JSON.stringify(creds)
                 });
                 const result = await response.json();
@@ -54,8 +57,10 @@ export default function Login() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if(await submitForm())
+        if(await submitForm()){
+            login(creds.username);
             navigate('/')
+        }
     }
 
     return (

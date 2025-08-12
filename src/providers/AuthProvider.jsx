@@ -4,25 +4,20 @@ const AuthContext = createContext();
 
 export default function AuthProvider({children}) {
     const [loggedIn, setLoggedIn] = useState(false);
-    const [userData, setUserData] = useState(null);
+    const [username, setUsername] = useState(null);
 
-    const login = () => {
+    const login = (argUsername) => {
         setLoggedIn(true);
-        setUserData(
-            {
-                name: "TestName",
-                email: "test@tmail.com",
-            }
-        )
+        setUsername(argUsername)
     };
 
     const logout = () => {
         setLoggedIn(false);
-        setUserData(null)
+        setUsername(null)
     };
 
     return (
-        <AuthContext.Provider value={{loggedIn, userData, login, logout}}>
+        <AuthContext.Provider value={{loggedIn, username, login, logout}}>
             {children}
         </AuthContext.Provider>
     )

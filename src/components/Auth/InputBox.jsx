@@ -29,7 +29,7 @@ export default function InputBox({cred, type, setCreds, placeholder, value}) {
             {
                 placeholder.toLowerCase().includes("password") ? 
                 <div className="absolute flex right-11">
-                    <button className="cursor-pointer" onClick={handleClick} type="button">
+                    <button className="cursor-pointer" onClick={handleClick} type="button" tabIndex={-1}>
                         {
                             showPassword ?
                             <EyeOff></EyeOff> :

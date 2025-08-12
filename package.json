@@ -16,6 +16,7 @@
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
+    "express-session": "^1.18.2",
     "lucide-react": "^0.536.0",
     "motion": "^12.23.12",
     "react": "^19.1.0",

@@ -6,12 +6,12 @@ import { AnimatePresence,motion } from "motion/react";
 export default function UserInfo(){
     const [showProfile, setShowProfile] = useState(false)
 
-    const {userData} = useAuthContext();
+    const {username} = useAuthContext();
     return (
         <div className="relative">
             <button className="flex flex-row font-semibold gap-1 text-xl text-emerald-900 cursor-pointer"
                     onClick={() => {setShowProfile(showProfile => !showProfile)}}>
-                <span className="underline">{userData.name}</span>
+                <span className="underline">{username}</span>
                 <i className="bi bi-person-circle"></i>
             </button>
             <AnimatePresence initial={false}>
