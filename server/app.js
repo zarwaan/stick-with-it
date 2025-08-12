@@ -1,7 +1,9 @@
-import express from 'express';
+import express, { response } from 'express';
 import cors from 'cors';
 import * as dotenv from 'dotenv';
 import session from 'express-session';
+import { register } from './CRUD/userOperations.js';
+import bcrypt from 'bcrypt';
 
 const app = express();
 app.use(express.json());
@@ -53,16 +55,17 @@ app.post('/login',(req,res)=>{
     })
 })
 
-app.post('/register',(req,res)=>{
-    const {username, password, firstName, lastName} = req.body;
-    //send to db
-    console.log(`Username: ${username} \nFirst name: ${firstName} \nLast name: ${lastName} \nPassword: ${password}`);
-    return res.status(200).json({
-        success: true,
-        message: "Registered successfully!",
-        userId: id++,
-    })
-})
+app.post('/register',async (req,res)=>{
+    try{
+        const {username, password, firstName, lastName} = req.body;
+        const hashedPassword = await bcrypt.hash(password,10);
+        const response = await register(username,firstName,lastName,hashedPassword);
+        res.status(200).json(response);
+    }
+    catch(err){
+        res.status(500).json(err.message);
+    }
+});
 
 app.post('/logout',(req,res) => {
     req.session.destroy(err => {
