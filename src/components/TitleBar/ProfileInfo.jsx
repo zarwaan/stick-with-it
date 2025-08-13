@@ -26,6 +26,7 @@ export default function ProfileInfo({username, firstName, lastName}){
             console.error('Could not send request')
         }
     }
+    
     return (
         <div className="w-fit border absolute right-0 p-2 rounded-xl flex flex-col text-lg items-center
                         gap-1 bg-[rgba(240,255,248,1)]">

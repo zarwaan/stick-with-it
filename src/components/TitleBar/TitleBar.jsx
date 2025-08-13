@@ -7,7 +7,7 @@ export default function TitleBar(){
     const [isAuth, setIsAuth] = useState(false);
     const location = useLocation();
     useEffect(() => {
-        (location.pathname==='/login' || location.pathname==='/register') ?
+        (location.pathname==='/login' || location.pathname==='/register' || location.pathname==='/user') ?
         setIsAuth(true) : setIsAuth(false)
     },[location])
     return(

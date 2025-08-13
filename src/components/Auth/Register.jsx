@@ -7,17 +7,13 @@ import SubmitButton from "./SubmitButton";
 import Error from "./Error";
 import { useNavigate } from "react-router-dom";
 import { checkIfEmpty, checkMatch, CheckNameValidity, checkUsernameValidity } from "../../helpers/errorChecks";
+import { useAuthContext } from "../../providers/AuthProvider";
 
 export default function Register() {
     const navigate = useNavigate();
     const [errorMessage, setErrorMessage] = useState(null);
+    const {login} = useAuthContext();
     
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if(await submitForm())
-            navigate('/');
-    }
-
     const [creds, setCreds] = useState({
         firstName: "",
         lastName: "",
@@ -25,6 +21,14 @@ export default function Register() {
         password: "",
         rePassword: "",
     });
+    
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if(await submitForm()){
+            login(creds.username)
+            navigate('/');
+        }
+    }
 
     const submitForm = async () => {
         const [usernameValid,message] = checkUsernameValidity(creds.username);

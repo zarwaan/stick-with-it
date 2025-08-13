@@ -43,6 +43,7 @@ app.post('/login',async (req,res)=>{
         const response = await login(username,password);
         if(response.success){
             req.session.user = response.result;
+            console.log('\nLogged in!')
             console.log(req.session.user);
             return res.status(200).json(response);
         }
@@ -60,6 +61,12 @@ app.post('/register',async (req,res)=>{
         const {username, password, firstName, lastName} = req.body;
         const hashedPassword = await bcrypt.hash(password,10);
         const response = await register(username,firstName,lastName,hashedPassword);
+        req.session.user = {
+            userId: response.result.insertId,
+            username: username
+        };
+        console.log('\nRegistered!')
+        console.log(req.session.user)
         return res.status(200).json(response);
     }
     catch(err){
@@ -74,6 +81,7 @@ app.post('/logout',(req,res) => {
             message: 'Could not log out'
         });
         res.clearCookie('connect.sid');
+        console.log('\nLogged out!')
         console.log(req.session);
         return res.status(200).json({
             success: true,
@@ -85,7 +93,6 @@ app.post('/logout',(req,res) => {
 app.post('/user-details',async (req,res)=>{
     try{
         //normally
-        console.log(req.session.user);
         const {userId, username} = req.session.user;
         
         // for testing with postman
@@ -93,21 +100,19 @@ app.post('/user-details',async (req,res)=>{
         
         const response = await getUserDetails(userId,username);
         if(response.success){
-            console.log(response);
             return res.status(200).json(response)
         }
         else{
-            console.log(response)
             return res.status(404).json(response)
         }
     }
     catch(err){
-        console.log(err)
         return res.status(500).json(err)
     }
 })
 
 app.post('/session-details',(req,res) => {
+    console.log('\nSession details')
     console.log(req.session.user);
 })
 
