@@ -47,3 +47,21 @@ export async function login(username, password){
         throw new Response(false,"Database fetch error",null)
     }
 }
+
+export async function getUserDetails(userId, username){
+    try{
+        const [res] = await conn.query(
+            "Select username, first_name, last_name from users where user_id = ?",
+            [userId]
+        );
+        if(res.length===0){
+            return new Response(false,"User doesn't exist!",null)
+        }
+        else{
+            return new Response(true,"Found successfully",res[0])
+        }
+    }
+    catch(err){
+        throw new Response(false,"Database fetch error",null)
+    }
+}

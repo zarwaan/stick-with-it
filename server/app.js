@@ -2,7 +2,7 @@ import express, { response } from 'express';
 import cors from 'cors';
 import * as dotenv from 'dotenv';
 import session from 'express-session';
-import { login, register } from './CRUD/userOperations.js';
+import { getUserDetails, login, register } from './CRUD/userOperations.js';
 import bcrypt from 'bcrypt';
 
 const app = express();
@@ -25,7 +25,7 @@ app.use(session({
     cookie: {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: 'none',
+        sameSite: 'lax',
         maxAge: 1000 * 60 * 60 * 24 * 30
     }
 }));
@@ -43,7 +43,7 @@ app.post('/login',async (req,res)=>{
         const response = await login(username,password);
         if(response.success){
             req.session.user = response.result;
-            console.log(response.result);
+            console.log(req.session.user);
             return res.status(200).json(response);
         }
         else{
@@ -63,7 +63,7 @@ app.post('/register',async (req,res)=>{
         return res.status(200).json(response);
     }
     catch(err){
-        return res.status(500).json(err);
+        return res.status(400).json(err);
     }
 });
 
@@ -80,6 +80,35 @@ app.post('/logout',(req,res) => {
             message: "Logged out!"
         })
     })
+})
+
+app.post('/user-details',async (req,res)=>{
+    try{
+        //normally
+        console.log(req.session.user);
+        const {userId, username} = req.session.user;
+        
+        // for testing with postman
+        // const {userId, username} = req.body;
+        
+        const response = await getUserDetails(userId,username);
+        if(response.success){
+            console.log(response);
+            return res.status(200).json(response)
+        }
+        else{
+            console.log(response)
+            return res.status(404).json(response)
+        }
+    }
+    catch(err){
+        console.log(err)
+        return res.status(500).json(err)
+    }
+})
+
+app.post('/session-details',(req,res) => {
+    console.log(req.session.user);
 })
 
 app.listen(port, () => console.log(`Server running on http://localhost:${port}`));
