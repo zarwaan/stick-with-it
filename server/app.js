@@ -2,7 +2,7 @@ import express, { response } from 'express';
 import cors from 'cors';
 import * as dotenv from 'dotenv';
 import session from 'express-session';
-import { register } from './CRUD/userOperations.js';
+import { login, register } from './CRUD/userOperations.js';
 import bcrypt from 'bcrypt';
 
 const app = express();
@@ -37,22 +37,22 @@ app.get('/',(req,res)=>{
     res.send('Server running!')
 });
 
-app.post('/login',(req,res)=>{
-    const {username, password} = req.body;
-    // send to db
-    console.log(`Username: ${username} \nPassword: ${password}`);
-    if(password!=="securepassword"){
-        return res.status(401).json({
-            success: false,
-            message: "Incorrect username or password"
-        })
+app.post('/login',async (req,res)=>{
+    try{
+        const {username, password} = req.body;
+        const response = await login(username,password);
+        if(response.success){
+            req.session.user = response.result;
+            console.log(response.result);
+            return res.status(200).json(response);
+        }
+        else{
+            return res.status(401).json(response);
+        }
     }
-    req.session.user = { username }
-    console.log(req.session.user);
-    return res.status(200).json({
-        success: true,
-        message: "Logged in successfully!"
-    })
+    catch(err){
+        return res.status(500).json(err)
+    }
 })
 
 app.post('/register',async (req,res)=>{
@@ -60,10 +60,10 @@ app.post('/register',async (req,res)=>{
         const {username, password, firstName, lastName} = req.body;
         const hashedPassword = await bcrypt.hash(password,10);
         const response = await register(username,firstName,lastName,hashedPassword);
-        res.status(200).json(response);
+        return res.status(200).json(response);
     }
     catch(err){
-        res.status(500).json(err.message);
+        return res.status(500).json(err);
     }
 });
 

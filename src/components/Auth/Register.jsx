@@ -48,15 +48,17 @@ export default function Register() {
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify(creds)
+                    body: JSON.stringify(creds),
+                    credentials: 'include'
                 });
                 const result = await response.json();
                 if(response.ok){
-                    console.log(`${result.message}\nid: ${result.userId}`)
+                    // console.log(`${result.message}\nid: ${result.userId}`)
+                    console.log(result.message);
                     return true;
                 }
                 else{
-                    setErrorMessage(`Server error :(`)
+                    setErrorMessage(result.message)
                 }
             }
             catch(err){
