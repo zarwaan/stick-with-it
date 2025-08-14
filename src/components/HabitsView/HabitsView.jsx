@@ -15,7 +15,12 @@ export default function HabitsView() {
         <div className="flex flex-col p-2 h-full gap-3 relative">
             <div className="flex flex-row justify-between items-center">
                 <div className="text-3xl font-bold">
-                    Your Habits:
+                    {
+                        showAll ?
+                        "All habits:"
+                        :
+                        "Today's habits:"
+                    }
                 </div>
                 <ShowAllToggle></ShowAllToggle>
             </div>

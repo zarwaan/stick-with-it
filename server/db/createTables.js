@@ -1,6 +1,6 @@
 import * as mysql from 'mysql2';
 import * as dotenv from 'dotenv'
-import { createUsersTable } from './dbSchema.js';
+import { createHabitsTable, createUsersTable } from './dbSchema.js';
 
 dotenv.config({
     path: process.env.NODE_ENV ? `.env.${process.env.NODE_ENV}` : ".env.development"
@@ -18,6 +18,11 @@ conn.connect(err => {
     conn.query(createUsersTable,(err,res)=>{
         if(err) throw err
         console.log('Created table users')
-        conn.end();
+    })
+
+    conn.query(createHabitsTable,(err,res)=>{
+        if(err) throw err
+        console.log('Created table habits')
+        conn.end()
     })
 })
