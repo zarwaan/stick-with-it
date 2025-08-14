@@ -4,7 +4,7 @@ import AuthLink from "./AuthLink";
 import Greeting from "./Greeting";
 import InputBox from "./InputBox";
 import SubmitButton from "./SubmitButton";
-import Error from "./Error";
+import Error from "../utils/Error";
 import { useNavigate } from "react-router-dom";
 import { checkIfEmpty, checkMatch, CheckNameValidity, checkUsernameValidity } from "../../helpers/errorChecks";
 import { useAuthContext } from "../../providers/AuthProvider";

@@ -4,6 +4,7 @@ import GenericButton from "./GenericButton";
 import UpdateDetailsButton from "./UpdateDetailsButton";
 import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../providers/AuthProvider";
+import Error from "../utils/Error";
 
 export default function Profile() {
     const navigate = useNavigate();
@@ -14,10 +15,12 @@ export default function Profile() {
     });
     const [editMode, setEditMode] = useState(false);
     const {logout} = useAuthContext()
+    const [errorMessage, setErrorMessage] = useState(null)
+    const urlRoot = import.meta.env.VITE_API_URL_ROOT
 
     const fetchUserDetails = async () => {
         try{
-            const response = await fetch(`${import.meta.env.VITE_API_URL_ROOT}/user-details`,{
+            const response = await fetch(`${urlRoot}/user-details`,{
                 method: 'POST',
                 headers: {
                         "Content-Type": "application/json"
@@ -39,7 +42,7 @@ export default function Profile() {
     }
 
     const logoutRequest = async () => {
-        const url = `${import.meta.env.VITE_API_URL_ROOT}/logout`
+        const url = `${urlRoot}/logout`
         try{
             const response = await fetch(url,{
                 method: 'POST',
@@ -65,7 +68,31 @@ export default function Profile() {
     }
 
     const changePassRequest = () => {};
-    const deleteAccountRequest = () => {};
+    
+    const deleteAccountRequest = async () => {
+        try{
+            const response = await fetch(`${urlRoot}/delete-user`,{
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: 'include'
+            });
+            const result = await response.json();
+            if(response.ok){
+                logout();
+                console.log(result.message)
+                navigate('/')
+            }
+            else{
+                console.error(result.message)
+            }
+        }
+        catch(err){
+            console.error(err)
+            console.log('Could not send request')
+        }
+    };
 
     useEffect(()=>{
         fetchUserDetails();
@@ -81,14 +108,22 @@ export default function Profile() {
             {
                 Object.keys(userData).map((cred,index) => {
                     return (
-                        <InputBox credName={cred} userData={userData} key={index} editMode={editMode}></InputBox>
+                        <InputBox credName={cred} userData={userData} key={index} editMode={editMode}
+                        setUserData={setUserData}></InputBox>
                     )
                 })
             }
             </div>
+            {
+                errorMessage &&
+                <div className="*:border-2">
+                    <Error errorText={errorMessage}></Error>
+                </div>
+            }
             <hr className="w-9/10 m-auto text-zinc-400"></hr>
             <div className="flex flex-row justify-around">
-                <UpdateDetailsButton editMode={editMode} setEditMode={setEditMode}></UpdateDetailsButton>
+                <UpdateDetailsButton editMode={editMode} setEditMode={setEditMode} userData={userData}
+                setErrorMessage={setErrorMessage}></UpdateDetailsButton>
                 {
                     [
                         ["changePass",changePassRequest],

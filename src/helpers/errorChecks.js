@@ -3,6 +3,10 @@ export function checkIfEmpty(creds){
     return Object.keys(creds).some(field => field!=="lastName" && creds[field] === "")
 }
 
+export function checkIfEmptyArrayForm(credsArray, creds){
+    return credsArray.some(field => creds[field] === "")
+}
+
 export function checkMatch(creds){
     return creds.password === creds.rePassword
 }

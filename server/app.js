@@ -2,7 +2,7 @@ import express, { response } from 'express';
 import cors from 'cors';
 import * as dotenv from 'dotenv';
 import session from 'express-session';
-import { getUserDetails, login, register } from './CRUD/userOperations.js';
+import { deleteUser, getUserDetails, login, register, updateUserDetails } from './CRUD/userOperations.js';
 import bcrypt from 'bcrypt';
 
 const app = express();
@@ -114,6 +114,69 @@ app.post('/user-details',async (req,res)=>{
 app.post('/session-details',(req,res) => {
     console.log('\nSession details')
     console.log(req.session.user);
+    try{
+        if(req.session.user){
+            return res.status(200).json({loggedIn: true, username: req.session.user.username})
+        }
+        else{
+            return res.status(200).json({loggedIn: false, username: null})
+        }
+    }
+    catch(err){
+        return res.status(500).json({message: "Server error"})
+    }
+})
+
+app.post('/delete-user', async (req,res) => {
+    try{
+        const {userId, username} = req.session.user;
+        const response = await deleteUser(userId,username)
+        if(response.success){
+            console.log('\nDeleted user!')
+            console.log(req.session.user);
+            req.session.destroy(err => {
+                if(err) return res.status(500).json({
+                    success: false,
+                    message: 'Could not log out'
+                });
+                res.clearCookie('connect.sid');
+                console.log('\nLogged out!')
+                console.log(req.session);
+                return res.status(200).json(response)
+            })
+        }
+        else{
+            return res.status(404).json(response)
+        }
+    }
+    catch(err){
+        return res.status(500).json(err)
+    }
+})
+
+app.post('/update-details',async (req,res) => {
+    try{
+        const {userId} = req.session.user
+        const {username, firstName, lastName} = req.body;
+        // continue from here
+        const response = await updateUserDetails(userId, username, firstName, lastName);
+        if(response.success){
+            req.session.user = {userId:userId, username:username}
+            console.log('\nUpdated user details!');
+            console.log(req.session.user)
+            return res.status(200).json(response)
+        }
+        else{
+            console.log("\details update trial")
+            console.log(response);
+            return res.status(400).json(response)
+        }
+    }
+    catch(err){
+        console.log("\ndetails update error")
+        console.log(err)
+        return res.status(500).json(err)
+    }
 })
 
 app.listen(port, () => console.log(`Server running on http://localhost:${port}`));

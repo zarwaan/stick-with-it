@@ -3,7 +3,7 @@ import Greeting from "./Greeting";
 import InputBox from "./InputBox";
 import SubmitButton from "./SubmitButton";
 import AuthLink from "./AuthLink";
-import Error from "./Error";
+import Error from "../utils/Error";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { checkIfEmpty } from "../../helpers/errorChecks";

@@ -65,3 +65,40 @@ export async function getUserDetails(userId, username){
         throw new Response(false,"Database fetch error",null)
     }
 }
+
+export async function deleteUser(userId, username){
+    try{
+        const [res] = await conn.query(
+            "Delete from users where user_id = ?",
+            [userId]
+        );
+        if(res.length===0){
+            return new Response(false,"User doesn't exist!",null)
+        }
+        else{
+            return new Response(true,"Deleted successfully",res)
+        }
+    }
+    catch(err){
+        throw new Response(false,"Database fetch error",null)
+    }
+}
+
+export async function updateUserDetails(userId, username, firstName, lastName){
+    try{
+        const [res] = await conn.query(
+            "Update users set username=?, first_name=?, last_name=? where user_id=?",
+            [username, firstName, lastName, userId]
+        );
+        if(res.affectedRows===0){
+            // should never be possible but will not affect anything
+            return new Response(true,"User doesn't exist!",null)
+        }
+        else{
+            return new Response(true,"Updated successfully",res)
+        }
+    }
+    catch(err){
+        throw new Response(false,"Database fetch error",null)
+    }
+}
