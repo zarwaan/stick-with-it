@@ -8,13 +8,17 @@ export const createUsersTable = `CREATE TABLE IF NOT EXISTS users(
 
 export const createHabitsTable = `CREATE TABLE IF NOT EXISTS habits(
     habit_id INT AUTO_INCREMENT PRIMARY KEY,
-    habit_title VARCHAR(100) NOT NULL,
-    habit_emoji JSON  NOT NULL,
+    user_id INT NOT NULL,
+    habit_title VARCHAR(200) NOT NULL,
+    habit_emoji JSON NOT NULL,
     monday TINYINT(1) NOT NULL,
     tuesday TINYINT(1) NOT NULL,
     wednesday TINYINT(1) NOT NULL,
     thursday TINYINT(1) NOT NULL,
     friday TINYINT(1) NOT NULL,
     saturday TINYINT(1) NOT NULL,
-    sunday TINYINT(1) NOT NULL
+    sunday TINYINT(1) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
 )`;
