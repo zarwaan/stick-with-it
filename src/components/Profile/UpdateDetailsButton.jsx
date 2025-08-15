@@ -22,7 +22,6 @@ export default function UpdateDetailsButton({editMode, setEditMode, userData, se
                 setErrorMessage(null)
                 console.log(userData);
                 await updateRequest()
-                setEditMode(false);
             }
         }
         else{
@@ -48,9 +47,11 @@ export default function UpdateDetailsButton({editMode, setEditMode, userData, se
             if(response.ok){
                 // remember to setUsername from AuthProvider manually
                 login(userData['username']);
-                console.log("Update succesfully")
+                console.log("Updated succesfully");
+                setEditMode(false)
             }
             else{
+                setErrorMessage(result.message)
                 console.log(result)
             }
             // continue here

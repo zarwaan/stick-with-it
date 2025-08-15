@@ -99,6 +99,9 @@ export async function updateUserDetails(userId, username, firstName, lastName){
         }
     }
     catch(err){
-        throw new Response(false,"Database fetch error",null)
+        if(err.code==='ER_DUP_ENTRY'){
+            throw new Response(false,"Username already exists!",null)
+        }
+        throw new Response(false,"Error inserting values!",null)
     }
 }
