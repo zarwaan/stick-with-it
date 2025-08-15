@@ -4,6 +4,7 @@ import * as dotenv from 'dotenv';
 import session from 'express-session';
 import { deleteUser, getUserDetails, login, register, updateUserDetails } from './CRUD/userOperations.js';
 import bcrypt from 'bcrypt';
+import { createNewHabit, fetchHabit, fetchUserHabits } from './CRUD/habitOperations.js';
 
 const app = express();
 app.use(express.json());
@@ -179,8 +180,76 @@ app.post('/update-details',async (req,res) => {
     }
 })
 
-app.post('/new-habit',(req,res) => {
-    
+app.post('/new-habit',async (req,res) => {
+    try{
+        // normal:
+        // const {userId} = req.session.user;
+        
+        // postman
+        const {userId} = req.body;
+
+        const {title, emoji, dayArray} = req.body;
+
+        const response = await createNewHabit(userId,title,emoji,dayArray)
+        if(response.success){
+            console.log("\nInserted new habit for user "+userId)
+            console.log(response)
+            return res.status(200).json(response)
+        }
+        else{
+            return res.status(500).json(response)
+        }
+    }
+    catch(err){
+        console.log("\nError inserting!")
+        console.log(err)
+        return res.status(500).json(response)
+    }
+})
+
+app.post('/fetch-habits',async (req,res) => {
+    try{
+        // normal:
+        // const {userId} = req.session.user;
+        
+        // postman
+        const {userId} = req.body;
+        const day = req.body.day || null;
+
+        const response = await fetchUserHabits(userId,day)
+        if(response.success){
+            console.log("\nFound")
+            console.log(response)
+            return res.status(200).json(response)
+        }
+    }
+    catch(err){
+        console.log("\nError finding!")
+        console.log(err)
+        return res.status(500).json(response)
+    }
+})
+
+app.post('/get-habit',async (req,res) => {
+    try{
+        const {habitId} = req.body;
+
+        const response = await fetchHabit(habitId)
+        if(response.success){
+            console.log("\nFound")
+            console.log(response)
+            return res.status(200).json(response)
+        }
+        else{
+            console.log("\nNot found")
+            return res.status(404).json(response)
+        }
+    }
+    catch(err){
+        console.log("\nError finding!")
+        console.log(err)
+        return res.status(500).json(response)
+    }
 })
 
 app.listen(port, () => console.log(`Server running on http://localhost:${port}`));
