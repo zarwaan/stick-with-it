@@ -1,21 +1,22 @@
 import { Check, Pencil, X } from "lucide-react";
 import { useHabitContext } from "../../providers/HabitProvider"
 import { motion } from "motion/react";
-import { week } from "../../helpers/calendar";
+import { today, week } from "../../helpers/calendar";
 import MarkedDay from "./MarkedDay";
 import { useEffect, useState } from "react";
 import { allHabits } from "./habits";
 
 export default function HabitDetails() {
     const {currentHabitView, closeHabit, editMode, setEditMode} = useHabitContext();
-    const [days, setDays] = useState(currentHabitView.dayArray);
 
-    useEffect(() => {
-        setDays(currentHabitView.dayArray)
-    },[currentHabitView])
+    // const [days, setDays] = useState(currentHabitView.dayArray);
+
+    // useEffect(() => {
+    //     setDays(currentHabitView.dayArray)
+    // },[currentHabitView])
 
     return (
-        <div className="flex flex-col relative gap-3 p-3 rounded-xl 
+        <div className="flex flex-col relative gap-3 p-5 rounded-xl 
                             border-2 border-green-900 bg-green-100
         ">
             <div className="absolute flex right-2 top-2 border-blue-600">
@@ -31,10 +32,10 @@ export default function HabitDetails() {
                 currentHabitView ? (
                 <>
                     <div className="text-5xl text-shadow-[-3px_3px_5px_rgb(0_0_0_/_0.5)]">
-                        {currentHabitView.emoji}
+                        {currentHabitView['habit_emoji']}
                     </div>
                     <div className=" text-3xl font-semibold">
-                        {currentHabitView.title}
+                        {currentHabitView['habit_title']}
                     </div>
                     <div className=" flex justify-between text-xl font-semibold">
                         <div className=" h-fit mt-auto mb-auto">Days to practice:</div>
@@ -43,8 +44,8 @@ export default function HabitDetails() {
                             onClick={()=>{
                                 setEditMode(mode => !mode)
                                 if(editMode){
-                                    currentHabitView.updateDays(days);
-                                    console.log(allHabits);
+                                    // currentHabitView.updateDays(days);
+                                    // console.log(allHabits);
                                 }
                             }}
                             whileHover={{
@@ -65,9 +66,11 @@ export default function HabitDetails() {
                         {
                             week.map((day,index)=> 
                                 <MarkedDay key={index} 
-                                day={day} isMarked={currentHabitView.dayArray[index]}
-                                index={index} days={days}
-                                setDays={setDays}>
+                                day={day} isMarked={currentHabitView[day.toLowerCase()]}
+                                index={index} 
+                                // days={days}
+                                // setDays={setDays}
+                                >
                                 </MarkedDay>
                             )
                         }

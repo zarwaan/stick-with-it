@@ -15,7 +15,7 @@
 // const arrAgain = JSON.parse(idk)
 // const emoji = String.fromCodePoint(...arrAgain)
 
-import { convertToDatabaseStorableString } from "../../src/helpers/emojiManipulation.js";
+import { convertToDatabaseStorableString, convertToEmoji } from "../../src/helpers/emojiManipulation.js";
 import { conn } from "../db/dbConn.js";
 
 class Response {
@@ -56,7 +56,14 @@ export async function fetchUserHabits(userId, day=null){
             return new Response(true,"No habits to show!",res)
         }
         else{
-            return new Response(true,"Found successfully",res)
+            return new Response(true,"Found successfully",
+                res.map((result) => { 
+                    return { 
+                        ...result, 
+                        habit_emoji: convertToEmoji(result['habit_emoji'])
+                    }
+                })
+            )
         }
     }
     catch(err){

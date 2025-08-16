@@ -183,10 +183,10 @@ app.post('/update-details',async (req,res) => {
 app.post('/new-habit',async (req,res) => {
     try{
         // normal:
-        // const {userId} = req.session.user;
+        const {userId} = req.session.user;
         
         // postman
-        const {userId} = req.body;
+        // const {userId} = req.body;
 
         const {title, emoji, dayArray} = req.body;
 
@@ -210,10 +210,10 @@ app.post('/new-habit',async (req,res) => {
 app.post('/fetch-habits',async (req,res) => {
     try{
         // normal:
-        // const {userId} = req.session.user;
+        const {userId} = req.session.user;
         
         // postman
-        const {userId} = req.body;
+        // const {userId} = req.body;
         const day = req.body.day || null;
 
         const response = await fetchUserHabits(userId,day)
@@ -228,7 +228,7 @@ app.post('/fetch-habits',async (req,res) => {
         console.log(err)
         return res.status(500).json(response)
     }
-})
+}) 
 
 app.post('/get-habit',async (req,res) => {
     try{

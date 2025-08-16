@@ -19,12 +19,12 @@ export default function Habit({habit}) {
                         onClick={()=>openHabit(habit)}>
             <div className="border- border-green-700 border-5 w-[10%] rounded-full aspect-square flex-center text-3xl">
                 <span className="text-shadow-[-3px_3px_5px_rgb(0_0_0_/_0.5)]">
-                    {habit.emoji}
+                    {habit['habit_emoji']}
                 </span>
             </div>
             <div className="border- border-blue-700 flex-1 flex items-center justify-between">
                 <span className="w-fit border-\ h-fit text-2xl font-semibold">
-                    {habit.title}
+                    {habit['habit_title']}
                 </span>
                 <div className="mr-2">
                     <button className="text-red-700 text-2xl cursor-pointer" 

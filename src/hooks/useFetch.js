@@ -1,0 +1,49 @@
+import { useCallback, useEffect, useMemo, useState } from "react";
+
+export default function useFetch(fetchUrl,options={},autoFetch=true) {
+    const mergedOptions = useMemo(() => ({
+        ...options,
+        headers: {
+            ...(options?.headers || {}),
+            "Content-Type": options?.headers?.["Content-Type"] || "application/json"
+        }
+    }),[options]);
+
+    const [data, setData] = useState(null);
+    const [isLoading, setIsLoading] = useState(autoFetch);
+    const [error, setError] = useState(null);
+
+    const fetchData = useCallback(async () => {
+        const controller = new AbortController();
+        setIsLoading(true);
+        setError(null);
+
+        try{
+            const response = await fetch(fetchUrl,{...mergedOptions, signal: controller.signal });
+            const result = await response.json();
+            if(response.ok){
+                setData(result)
+            }
+            else{
+                setError(result)
+            }
+        }
+        catch(err){
+            if(err.name !== "AbortError")
+                setError(err)
+        }
+        finally{
+            setIsLoading(false)
+        }
+
+        return () => controller.abort();
+    },[fetchUrl, mergedOptions])
+
+    useEffect(() => {
+        if(autoFetch) fetchData();
+    },[fetchData, autoFetch])
+
+    return {
+        data, isLoading, error, fetchData
+    };
+}
