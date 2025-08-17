@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo } from "react"
 import { allHabits } from "./habits"
 import ShowAllToggle from "./ShowAllToggle"
 import { useHabitContext } from "../../providers/HabitProvider"
@@ -13,13 +13,40 @@ import Error from "../utils/Error";
 import useFetch from "../../hooks/useFetch";
 import Loader from "../utils/Loader";
 
+function HabitList({ isLoading, error, habits, showAll, today }) {
+  if (isLoading) {
+    return <Loader widthInPercent={6} />
+  }
+  if (error) {
+    return (
+      <div className="pt-10 text-xl">
+        <Error errorText="Could not load data" />
+      </div>
+    )
+  }
+  if (habits) {
+    return habits.result.map((habit) => {
+      if (showAll || habit[today.toLowerCase()]) {
+        return <Habit habit={habit} key={habit.habit_id} />
+      }
+      return null
+    })
+  }
+  return null
+}
+
 export default function HabitsView() {
     const {showAll, sideBarOpen} = useHabitContext();
     const {loggedIn} = useAuthContext();
 
-    const {data: habits, isLoading, error, fetchData: fetchHabits} = useFetch(`${import.meta.env.VITE_API_URL_ROOT}/fetch-habits`,{
-        method: 'POST',
-        credentials: 'include',
+    // const fetchOptions = useMemo(() => ({
+    // method: 'POST',
+    // credentials: 'include',
+    // }), []);
+
+    const {data: habits, isLoading, error, fetchData: fetchHabits} = useFetch(`/fetch-habits`,{
+    method: 'POST',
+    credentials: 'include',
     },false);
 
     useEffect(() => {
@@ -28,32 +55,32 @@ export default function HabitsView() {
         }
     },[loggedIn])
 
-    const HabitList = () => {
-        if(isLoading){
-            return (
-                <Loader widthInPercent={6}></Loader>
-            )
-        }
-        if(error){
-            console.log(error)
-            return (
-                <div className="pt-10 text-xl">
-                    <Error errorText={"Could not load data"}></Error>
-                </div>
-            )
-        }
-        if(habits){
-            console.log(habits)
-            return (
-                habits.result.map((habit) => {
-                    if(showAll || habit[today.toLowerCase()])
-                        return (
-                            <Habit habit={habit} key={habit['habit_id']}></Habit>
-                        )
-                })
-            )
-        }
-    }
+    // const HabitList = () => {
+    //     if(isLoading){
+    //         return (
+    //             <Loader widthInPercent={6}></Loader>
+    //         )
+    //     }
+    //     if(error){
+    //         console.log(error)
+    //         return (
+    //             <div className="pt-10 text-xl">
+    //                 <Error errorText={"Could not load data"}></Error>
+    //             </div>
+    //         )
+    //     }
+    //     if(habits){
+    //         // console.log(habits)
+    //         return (
+    //             habits.result.map((habit) => {
+    //                 if(showAll || habit[today.toLowerCase()])
+    //                     return (
+    //                         <Habit habit={habit} key={habit['habit_id']}></Habit>
+    //                     )
+    //             })
+    //         )
+    //     }
+    // }
 
     return (
         <div className="flex flex-col p-2 h-full gap-3 relative">
@@ -79,7 +106,13 @@ export default function HabitsView() {
                         //     }
                         //     return null;
                         // })
-                        <HabitList></HabitList>
+                        <HabitList
+                            isLoading={isLoading}
+                            error={error}
+                            habits={habits}
+                            showAll={showAll}
+                            today={today}
+                        />
                         :
                         <div className="pt-10">
                             <NotLoggedIn fontSize={20} iconSize={50} strokeWidth={1}></NotLoggedIn>
@@ -102,7 +135,10 @@ export default function HabitsView() {
                     }
                 </AnimatePresence>
             </div>
-            <CreateNewButton></CreateNewButton>
+            {
+                loggedIn &&
+                <CreateNewButton></CreateNewButton>
+            }
         </div>
     )
 }

@@ -5,6 +5,7 @@ import Login from './components/Auth/Login.jsx'
 import Register from './components/Auth/Register.jsx'
 import Error404 from './components/Error404.jsx'
 import Profile from './components/Profile/Profile.jsx'
+import NewHabit from './components/NewHabit/NewHabit.jsx'
 
 export const router = createBrowserRouter([
 	{
@@ -25,7 +26,7 @@ export const router = createBrowserRouter([
 			},
 			{
 				path: 'new-habit',
-				element: <div>New Habit Page (to be added later)</div>
+				element: <NewHabit></NewHabit>
 			},
 			{
 				path: 'user',

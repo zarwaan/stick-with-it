@@ -1,25 +1,29 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 export default function useFetch(fetchUrl,options={},autoFetch=true) {
-    const mergedOptions = useMemo(() => ({
-        ...options,
-        headers: {
-            ...(options?.headers || {}),
-            "Content-Type": options?.headers?.["Content-Type"] || "application/json"
-        }
-    }),[options]);
 
     const [data, setData] = useState(null);
     const [isLoading, setIsLoading] = useState(autoFetch);
     const [error, setError] = useState(null);
 
-    const fetchData = useCallback(async () => {
+    const fetchData = useCallback(async (override = {}) => {
         const controller = new AbortController();
         setIsLoading(true);
         setError(null);
 
+        const merged = {
+        ...options,
+        ...override,
+        headers: {
+          "Content-Type": "application/json",
+          ...(options.headers || {}),
+          ...(override.headers || {}),
+        },
+        signal: controller.signal,
+      };
+
         try{
-            const response = await fetch(fetchUrl,{...mergedOptions, signal: controller.signal });
+            const response = await fetch(`${import.meta.env.VITE_API_URL_ROOT}${fetchUrl}`,merged);
             const result = await response.json();
             if(response.ok){
                 setData(result)
@@ -37,7 +41,7 @@ export default function useFetch(fetchUrl,options={},autoFetch=true) {
         }
 
         return () => controller.abort();
-    },[fetchUrl, mergedOptions])
+    },[fetchUrl,options])
 
     useEffect(() => {
         if(autoFetch) fetchData();
