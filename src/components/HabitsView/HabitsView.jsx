@@ -36,7 +36,7 @@ function HabitList({ isLoading, error, habits, showAll, today }) {
 }
 
 export default function HabitsView() {
-    const {showAll, sideBarOpen} = useHabitContext();
+    const {showAll, sideBarOpen, habitsUpdated} = useHabitContext();
     const {loggedIn} = useAuthContext();
     const {day} = today();
 
@@ -49,7 +49,7 @@ export default function HabitsView() {
         if(loggedIn) {
             fetchHabits();
         }
-    },[loggedIn])
+    },[loggedIn,habitsUpdated])
 
     return (
         <div className="flex flex-col p-2 h-full gap-3 relative">
@@ -64,7 +64,7 @@ export default function HabitsView() {
                 </div>
                 <ShowAllToggle></ShowAllToggle>
             </div>
-            <div className="flex flex-row h-[100%] border-blue-700 overflow-hidden gap-2">
+            <div className="flex flex-row h-[100%] border-blue-700 overflow-hidden gap-2 pb-1">
                 <div className=" border-red-700 pr-3 flex flex-1 flex-col gap-3 h-[100%] overflow-y-scroll" id="habit-list">
                     {
                         loggedIn ? 

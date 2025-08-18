@@ -7,12 +7,40 @@ import { today } from "../../helpers/calendar";
 export default function Habit({habit}) {
     const [deleteHover, setDeleteHover] = useState(false);
     const {openHabit} = useHabitContext();
+    const { triggerUpdate, currentHabitView, closeHabit, editMode } = useHabitContext();
+
+    const deleteRequest = async () => {
+        if(confirm(`Are you sure you want to delete "${habit['habit_title']}"?`)) {
+            try{
+                const response = await fetch(`${import.meta.env.VITE_API_URL_ROOT}/delete-habit`,{
+                    method: 'POST',
+                    headers: {
+                            "Content-Type": "application/json"
+                        },
+                    credentials: 'include',
+                    body: JSON.stringify({habitId : habit['habit_id']})
+                })
+                const result = await response.json();
+                if(response.ok){
+                    triggerUpdate();
+                    if(currentHabitView['habit_id'] === habit['habit_id']) 
+                        closeHabit();
+                }
+                else{
+                    console.error(result)
+                }
+            }
+            catch(err){
+                console.error(err)
+            }
+        }
+    }
 
     return (
         <motion.div className="border border-2 border-green-900 rounded-full flex flex-row p-2 gap-3
                         bg-green-100 cursor-pointer"
                         whileTap={{y:2}}
-                        onClick={()=>openHabit(habit)}>
+                        onClick={()=> {if(!editMode) openHabit(habit)}}>
             <div className="border- border-green-700 border-5 w-[10%] rounded-full aspect-square flex-center text-3xl">
                 <span className="text-shadow-[-3px_3px_5px_rgb(0_0_0_/_0.5)]">
                     {habit['habit_emoji']}
@@ -37,6 +65,7 @@ export default function Habit({habit}) {
                         onMouseLeave={()=>setDeleteHover(false)}
                         onClick={(e)=>{
                             e.stopPropagation();
+                            deleteRequest();
                         }}>
                         <i className={`bi ${deleteHover ? "bi-trash3-fill" : "bi-trash3"}`}></i>
                     </button>

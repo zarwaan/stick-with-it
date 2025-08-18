@@ -20,7 +20,7 @@ export default function HabitDetails() {
                             border-2 border-green-900 bg-green-100
         ">
             <div className="absolute flex right-2 top-2 border-blue-600">
-                <motion.button onClick={() => closeHabit()} className="border-red-600 cursor-pointer"
+                <motion.button onClick={() => {closeHabit(); setEditMode(false);}} className="border-red-600 cursor-pointer"
                     whileHover={{
                         color: "#8b0000"
                     }}

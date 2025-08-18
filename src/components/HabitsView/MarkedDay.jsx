@@ -30,4 +30,4 @@ export default function MarkedDay({day,isMarked,index
     )
 }
 
-// change from AllHabits.{habit}.dayArray =
+// change from AllHabits.{habit}.dayArray = 

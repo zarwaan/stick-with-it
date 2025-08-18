@@ -8,6 +8,7 @@ export default function HabitProvider({children}) {
     const [currentHabitView, setCurrentHabitView] = useState(null)
     const [sideBarOpen, setSideBarOpen] = useState(false)
     const [editMode, setEditMode] = useState(false)
+    const [habitsUpdated, setHabitsUpdated] = useState(false)
 
     const openHabit = (habit) => {
         setCurrentHabitView(habit);
@@ -19,8 +20,16 @@ export default function HabitProvider({children}) {
         setSideBarOpen(false);
     }
 
+    const triggerUpdate = () => {
+        setHabitsUpdated(prev => prev + 1)
+    }
+
     return (
-        <HabitContext.Provider value={{showAll, setShowAll, currentHabitView, sideBarOpen , openHabit, closeHabit, editMode, setEditMode}}>
+        <HabitContext.Provider value={{
+            showAll, setShowAll, currentHabitView, sideBarOpen , 
+            openHabit, closeHabit, editMode, setEditMode,
+            habitsUpdated, triggerUpdate
+        }}>
             {children}
         </HabitContext.Provider>
     )

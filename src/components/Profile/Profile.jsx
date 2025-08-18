@@ -70,27 +70,30 @@ export default function Profile() {
     const changePassRequest = () => {};
     
     const deleteAccountRequest = async () => {
-        try{
-            const response = await fetch(`${urlRoot}/delete-user`,{
-                method: 'POST',
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                credentials: 'include'
-            });
-            const result = await response.json();
-            if(response.ok){
-                logout();
-                console.log(result.message)
-                navigate('/')
+        if(confirm("Are you sure you want to delete your account?"))
+        {
+            try{
+                const response = await fetch(`${urlRoot}/delete-user`,{
+                    method: 'POST',
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    credentials: 'include'
+                });
+                const result = await response.json();
+                if(response.ok){
+                    logout();
+                    console.log(result.message)
+                    navigate('/')
+                }
+                else{
+                    console.error(result.message)
+                }
             }
-            else{
-                console.error(result.message)
+            catch(err){
+                console.error(err)
+                console.log('Could not send request')
             }
-        }
-        catch(err){
-            console.error(err)
-            console.log('Could not send request')
         }
     };
 

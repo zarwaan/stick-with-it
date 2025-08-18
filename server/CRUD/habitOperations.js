@@ -67,7 +67,7 @@ export async function fetchUserHabits(userId, day=null){
         }
     }
     catch(err){
-        return new Response(false,"Database error",null)
+        throw new Response(false,"Database error",null)
     }
 }
 
@@ -85,6 +85,19 @@ export async function fetchHabit(habitId) {
         }
     }
     catch(err){
-        return new Response(false,"Database error",null)
+        throw new Response(false,"Database error",null)
+    }
+}
+
+export async function deleteHabit(habitId){
+    try{
+        const [res] = await conn.query(
+            "delete from habits where habit_id = ?",
+            [habitId]
+        );
+        return new Response(true, "Deleted successfully",res)
+    }
+    catch(err){
+        throw new Response(false, "Database error", null)
     }
 }
