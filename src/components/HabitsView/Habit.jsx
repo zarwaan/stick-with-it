@@ -2,15 +2,11 @@ import { useState } from "react"
 import { motion } from "motion/react";
 import { useHabitContext } from "../../providers/HabitProvider";
 import { allHabits } from "./habits";
+import { today } from "../../helpers/calendar";
 
 export default function Habit({habit}) {
     const [deleteHover, setDeleteHover] = useState(false);
     const {openHabit} = useHabitContext();
-
-    // const handleDelete = (e) => {
-    //     e.stopPropagation();
-    //     habit.clearHabit(allHabits);
-    // }
 
     return (
         <motion.div className="border border-2 border-green-900 rounded-full flex flex-row p-2 gap-3
@@ -26,13 +22,21 @@ export default function Habit({habit}) {
                 <span className="w-fit border-\ h-fit text-2xl font-semibold">
                     {habit['habit_title']}
                 </span>
-                <div className="mr-2">
+                <div className="mr-2 flex flex-row gap-12">
+                    {
+                        habit[today().day.toLowerCase()] === 1 &&
+                        <motion.button className="border-2 p-2 pl-3 pr-3 rounded-lg cursor-pointer
+                                                    font-semibold text-white border-black"
+                                        style={{backgroundColor: "#008235"}}
+                                        whileHover={{scale:1.1, backgroundColor: "#00b000ff"}}>
+                            Mark as completed
+                        </motion.button>
+                    }
                     <button className="text-red-700 text-2xl cursor-pointer" 
                         onMouseEnter={()=>setDeleteHover(true)}
                         onMouseLeave={()=>setDeleteHover(false)}
                         onClick={(e)=>{
                             e.stopPropagation();
-                            // habit.clearHabit(allHabits);
                         }}>
                         <i className={`bi ${deleteHover ? "bi-trash3-fill" : "bi-trash3"}`}></i>
                     </button>

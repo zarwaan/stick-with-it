@@ -3,9 +3,10 @@ import Layout from './components/Layout.jsx'
 import Home from './components/Home.jsx'
 import Login from './components/Auth/Login.jsx'
 import Register from './components/Auth/Register.jsx'
-import Error404 from './components/Error404.jsx'
+import Error404 from './components/ErrorPages/Error404.jsx'
 import Profile from './components/Profile/Profile.jsx'
 import NewHabit from './components/NewHabit/NewHabit.jsx'
+import ProtectedRoute from './components/ErrorPages/ProtectedRoute.jsx'
 
 export const router = createBrowserRouter([
 	{
@@ -25,12 +26,17 @@ export const router = createBrowserRouter([
 				element: <Register></Register>
 			},
 			{
-				path: 'new-habit',
-				element: <NewHabit></NewHabit>
-			},
-			{
-				path: 'user',
-				element: <Profile></Profile>
+				element: <ProtectedRoute></ProtectedRoute>,
+				children: [
+					{
+						path: 'new-habit',
+						element: <NewHabit></NewHabit>
+					},
+					{
+						path: 'user',
+						element: <Profile></Profile>
+					},
+				]
 			},
 			{
 				path: '*',

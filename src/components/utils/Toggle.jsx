@@ -10,7 +10,7 @@ export default function Toggle({widthValue, handleClick}){
             setX(ref.current.offsetWidth - 3)
             // console.log(ref.current.offsetWidth);
         }
-    },[]);
+    },[toggleOn]);
     
     return(
         <button className="h-full cursor-pointer" onClick={()=>{setToggleOn(on => !on); handleClick(prev => !prev)}}>

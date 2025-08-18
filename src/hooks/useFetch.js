@@ -6,21 +6,19 @@ export default function useFetch(fetchUrl,options={},autoFetch=true) {
     const [isLoading, setIsLoading] = useState(autoFetch);
     const [error, setError] = useState(null);
 
-    const fetchData = useCallback(async (override = {}) => {
+    const fetchData = useCallback(async () => {
         const controller = new AbortController();
         setIsLoading(true);
         setError(null);
 
         const merged = {
-        ...options,
-        ...override,
-        headers: {
-          "Content-Type": "application/json",
-          ...(options.headers || {}),
-          ...(override.headers || {}),
-        },
-        signal: controller.signal,
-      };
+            ...options,
+            headers: {
+            "Content-Type": "application/json",
+            ...(options.headers || {}),
+            },
+            signal: controller.signal,
+        };
 
         try{
             const response = await fetch(`${import.meta.env.VITE_API_URL_ROOT}${fetchUrl}`,merged);

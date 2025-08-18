@@ -3,7 +3,6 @@ import { allHabits } from "./habits"
 import ShowAllToggle from "./ShowAllToggle"
 import { useHabitContext } from "../../providers/HabitProvider"
 import Habit from "./Habit";
-import { week, weekAbbr, weekSingleLetter, today } from "../../helpers/calendar";
 import { AnimatePresence, motion} from "motion/react";
 import HabitDetails from "./HabitDetails";
 import CreateNewButton from "./CreateNewButton";
@@ -12,6 +11,7 @@ import NotLoggedIn from "../utils/NotLoggedIn";
 import Error from "../utils/Error";
 import useFetch from "../../hooks/useFetch";
 import Loader from "../utils/Loader";
+import { today } from "../../helpers/calendar";
 
 function HabitList({ isLoading, error, habits, showAll, today }) {
   if (isLoading) {
@@ -38,11 +38,7 @@ function HabitList({ isLoading, error, habits, showAll, today }) {
 export default function HabitsView() {
     const {showAll, sideBarOpen} = useHabitContext();
     const {loggedIn} = useAuthContext();
-
-    // const fetchOptions = useMemo(() => ({
-    // method: 'POST',
-    // credentials: 'include',
-    // }), []);
+    const {day} = today();
 
     const {data: habits, isLoading, error, fetchData: fetchHabits} = useFetch(`/fetch-habits`,{
     method: 'POST',
@@ -55,33 +51,6 @@ export default function HabitsView() {
         }
     },[loggedIn])
 
-    // const HabitList = () => {
-    //     if(isLoading){
-    //         return (
-    //             <Loader widthInPercent={6}></Loader>
-    //         )
-    //     }
-    //     if(error){
-    //         console.log(error)
-    //         return (
-    //             <div className="pt-10 text-xl">
-    //                 <Error errorText={"Could not load data"}></Error>
-    //             </div>
-    //         )
-    //     }
-    //     if(habits){
-    //         // console.log(habits)
-    //         return (
-    //             habits.result.map((habit) => {
-    //                 if(showAll || habit[today.toLowerCase()])
-    //                     return (
-    //                         <Habit habit={habit} key={habit['habit_id']}></Habit>
-    //                     )
-    //             })
-    //         )
-    //     }
-    // }
-
     return (
         <div className="flex flex-col p-2 h-full gap-3 relative">
             <div className="flex flex-row justify-between items-center">
@@ -90,7 +59,7 @@ export default function HabitsView() {
                         showAll ?
                         "All habits:"
                         :
-                        today+"'s habits:"
+                        day+"'s habits:"
                     }
                 </div>
                 <ShowAllToggle></ShowAllToggle>
@@ -99,19 +68,12 @@ export default function HabitsView() {
                 <div className=" border-red-700 pr-3 flex flex-1 flex-col gap-3 h-[100%] overflow-y-scroll" id="habit-list">
                     {
                         loggedIn ? 
-                        // allHabits.map((habit, index) => {
-                        //     const todayDaynum = week.indexOf(today)
-                        //     if(habit.dayArray[todayDaynum] || (!habit.dayArray[todayDaynum] && showAll)){
-                        //         return (<Habit key={index} habit={habit}></Habit>)
-                        //     }
-                        //     return null;
-                        // })
                         <HabitList
                             isLoading={isLoading}
                             error={error}
                             habits={habits}
                             showAll={showAll}
-                            today={today}
+                            today={day}
                         />
                         :
                         <div className="pt-10">
