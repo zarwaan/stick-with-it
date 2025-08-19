@@ -26,6 +26,24 @@ class Response {
     }
 }
 
+class AuthError extends Error {
+    constructor(message="Unauthorised!",code=401){
+        super(message)
+        this.code = code
+        this.name = "AuthError"
+    }
+}
+
+async function authorise(userId, habitId){
+    const [res] = await conn.query(
+        "Select user_id from habits where habit_id = ?",
+        [habitId]
+    );
+    if(res.length===0 || userId !== res[0]['user_id']){
+        throw new AuthError();
+    }
+}
+
 export async function createNewHabit(userId, title, emoji, dayArray){
     try{
         const [res] = await conn.query(
@@ -89,8 +107,9 @@ export async function fetchHabit(habitId) {
     }
 }
 
-export async function deleteHabit(habitId){
+export async function deleteHabit(userId, habitId){
     try{
+        await authorise(userId, habitId);
         const [res] = await conn.query(
             "delete from habits where habit_id = ?",
             [habitId]
@@ -98,6 +117,33 @@ export async function deleteHabit(habitId){
         return new Response(true, "Deleted successfully",res)
     }
     catch(err){
+        if(err instanceof AuthError) throw err
         throw new Response(false, "Database error", null)
+    }
+}
+
+export async function updateHabit(userId, habitId, title, emoji, dayArray){
+    try{
+        await authorise(userId, habitId);
+        const [res] = await conn.query(
+            `update habits set
+                monday=?, tuesday=?, wednesday=?, thursday=?, friday=?, saturday=?, sunday=?
+                    where habit_id = ?`,
+            [
+                ...dayArray,
+                habitId
+            ]
+        )
+        if(res.affectedRows===0){
+            // should never be possible but will not affect anything
+            return new Response(true,"Habit doesn't exist!",null)
+        }
+        else{
+            return new Response(true,"Updated successfully",res)
+        }
+    }
+    catch(err){
+        if(err instanceof AuthError) throw err
+        throw new Response(false,"Error inserting values!",null)
     }
 }

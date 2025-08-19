@@ -14,25 +14,26 @@ import Loader from "../utils/Loader";
 import { today } from "../../helpers/calendar";
 
 function HabitList({ isLoading, error, habits, showAll, today }) {
-  if (isLoading) {
-    return <Loader widthInPercent={6} />
-  }
-  if (error) {
-    return (
-      <div className="pt-10 text-xl">
-        <Error errorText="Could not load data" />
-      </div>
-    )
-  }
-  if (habits) {
-    return habits.result.map((habit) => {
-      if (showAll || habit[today.toLowerCase()]) {
-        return <Habit habit={habit} key={habit.habit_id} />
-      }
-      return null
-    })
-  }
-  return null
+    if (isLoading) {
+        return <Loader widthInPercent={6} />
+    }
+    if (error) {
+        return (
+            <div className="pt-10 text-xl">
+                <Error errorText="Could not load data" />
+            </div>
+        )
+    }
+    if (habits) {
+        if (habits.result.length === 0) return <div>Nothing to show!</div>
+        return habits.result.map((habit) => {
+            if (showAll || habit[today.toLowerCase()]) {
+                return <Habit habit={habit} key={habit.habit_id} />
+            }
+            return null
+        })
+    }
+    return null
 }
 
 export default function HabitsView() {

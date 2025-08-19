@@ -5,15 +5,63 @@ import { today, week } from "../../helpers/calendar";
 import MarkedDay from "./MarkedDay";
 import { useEffect, useState } from "react";
 import { allHabits } from "./habits";
+import { pre, title } from "motion/react-client";
 
 export default function HabitDetails() {
-    const {currentHabitView, closeHabit, editMode, setEditMode} = useHabitContext();
+    const {currentHabitView, closeHabit, editMode, setEditMode, triggerUpdate, showAll} = useHabitContext();
 
-    // const [days, setDays] = useState(currentHabitView.dayArray);
+    const [days, setDays] = useState(week.map((day) => currentHabitView[day.toLowerCase()]) || null)
+    const [habitData, setHabitData] = useState({
+        title: currentHabitView['habit_title'] || "",
+        emoji: currentHabitView['habit_emoji'] || ""
+    });
 
-    // useEffect(() => {
-    //     setDays(currentHabitView.dayArray)
-    // },[currentHabitView])
+    useEffect(() => {
+        setHabitData(prev => ({
+            ...prev,
+            title: currentHabitView['habit_title'] || "",
+            emoji: currentHabitView['habit_emoji'] || ""
+        }))
+        setDays(week.map((day) => currentHabitView[day.toLowerCase()]) || null)
+    },[currentHabitView])
+
+    const editDay = (index) => {
+        setDays((prev) => (
+            prev.map((value, thisIndex) => thisIndex === index ? 1 - value : value)
+        ))
+    }
+
+    const updateRequest = async () => {
+        const data = {
+            ...habitData,
+            dayArray: days
+        }
+
+        try{
+            const response = await fetch(`${import.meta.env.VITE_API_URL_ROOT}/update-habit`,{
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: 'include',
+                body: JSON.stringify({
+                    habitId: currentHabitView['habit_id'],
+                    ...habitData,
+                    dayArray: days
+                })
+            })
+            const result = await response.json();
+            if(response.ok){
+                triggerUpdate();
+            }
+            else{
+                console.log(result)
+            }
+        }
+        catch(err){
+            console.log(err)
+        }
+    }
 
     return (
         <div className="flex flex-col relative gap-3 p-5 rounded-xl 
@@ -41,12 +89,18 @@ export default function HabitDetails() {
                         <div className=" h-fit mt-auto mb-auto">Days to practice:</div>
                         <div className=" flex flex-row">
                             <motion.button className=" cursor-pointer rounded-full p-1 aspect-square flex-center" 
-                            onClick={()=>{
-                                setEditMode(mode => !mode)
+                            onClick={async ()=>{
                                 if(editMode){
                                     // currentHabitView.updateDays(days);
                                     // console.log(allHabits);
+                                    // console.log({
+                                    //     habitId: currentHabitView['habit_id'],
+                                    //     ...habitData,
+                                    //     dayArray: days
+                                    // })
+                                    await updateRequest();
                                 }
+                                setEditMode(mode => !mode)
                             }}
                             whileHover={{
                                 color: "rgb(255,255,255)",
@@ -66,10 +120,8 @@ export default function HabitDetails() {
                         {
                             week.map((day,index)=> 
                                 <MarkedDay key={index} 
-                                day={day} isMarked={currentHabitView[day.toLowerCase()]}
-                                index={index} 
-                                // days={days}
-                                // setDays={setDays}
+                                day={day} isMarked={days[index]}
+                                index={index} editDay={editDay} 
                                 >
                                 </MarkedDay>
                             )

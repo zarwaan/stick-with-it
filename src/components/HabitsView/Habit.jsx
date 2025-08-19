@@ -63,9 +63,9 @@ export default function Habit({habit}) {
                     <button className="text-red-700 text-2xl cursor-pointer" 
                         onMouseEnter={()=>setDeleteHover(true)}
                         onMouseLeave={()=>setDeleteHover(false)}
-                        onClick={(e)=>{
+                        onClick={async (e)=>{
                             e.stopPropagation();
-                            deleteRequest();
+                            await deleteRequest();
                         }}>
                         <i className={`bi ${deleteHover ? "bi-trash3-fill" : "bi-trash3"}`}></i>
                     </button>

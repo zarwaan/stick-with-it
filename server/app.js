@@ -4,7 +4,7 @@ import * as dotenv from 'dotenv';
 import session from 'express-session';
 import { deleteUser, getUserDetails, login, register, updateUserDetails } from './CRUD/userOperations.js';
 import bcrypt from 'bcrypt';
-import { createNewHabit, deleteHabit, fetchHabit, fetchUserHabits } from './CRUD/habitOperations.js';
+import { createNewHabit, deleteHabit, fetchHabit, fetchUserHabits, updateHabit } from './CRUD/habitOperations.js';
 
 const app = express();
 app.use(express.json());
@@ -254,9 +254,10 @@ app.post('/get-habit',async (req,res) => {
 
 app.post('/delete-habit',async (req,res) => {
     try{
+        const {userId} = req.session.user || -1;
         const {habitId} = req.body;
 
-        const response = await deleteHabit(habitId)
+        const response = await deleteHabit(userId, habitId)
         if(response.success){
             console.log("\nDeleted")
             console.log(response)
@@ -268,7 +269,33 @@ app.post('/delete-habit',async (req,res) => {
         }
     }
     catch(err){
+        if(err.code === 401) return res.status(401).json(err)
         console.log("\nError deleting!")
+        console.log(err)
+        return res.status(500).json(err)
+    }
+})
+
+app.post('/update-habit', async (req,res) => {
+    try{
+        const {userId} = req.session.user || -1;
+        const {habitId, title, emoji, dayArray} = req.body;
+        const response = await updateHabit(userId,habitId,title,emoji,dayArray);
+
+        if(response.success){
+            console.log("\nUpdated")
+            console.log(response)
+            return res.status(200).json(response)
+        }
+        else{
+            console.log("\Not found")
+            console.log(response)
+            return res.status(404).json(response)
+        }
+    }
+    catch(err){
+        if(err.code === 401) return res.status(401).json(err)
+        console.log('\nError Updating')
         console.log(err)
         return res.status(500).json(err)
     }
