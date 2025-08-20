@@ -4,7 +4,8 @@ import * as dotenv from 'dotenv';
 import session from 'express-session';
 import { deleteUser, getUserDetails, login, register, updateUserDetails } from './CRUD/userOperations.js';
 import bcrypt from 'bcrypt';
-import { createNewHabit, deleteHabit, fetchHabit, fetchUserHabits, updateHabit } from './CRUD/habitOperations.js';
+import { AuthError, createNewHabit, deleteHabit, fetchHabit, fetchUserHabits, updateHabit } from './CRUD/habitOperations.js';
+import { logHabit } from './CRUD/habitlogOperations.js';
 
 const app = express();
 app.use(express.json());
@@ -298,6 +299,31 @@ app.post('/update-habit', async (req,res) => {
         console.log('\nError Updating')
         console.log(err)
         return res.status(500).json(err)
+    }
+})
+
+function returnError(err,res){
+    if(err instanceof AuthError)
+        return res.status(401).json(err)
+    return res.status(500).json(err)
+}
+
+app.post('/log-habit',async (req,res) => {
+    try{
+        // const {userId} = req.session.user || -1;
+        const {habitId, userId} = req.body;
+
+        const response = await logHabit(habitId, userId);
+        if(response.success){
+            return res.status(200).json(response)
+        }
+        else{
+            return res.status(409).json(response)
+        }
+    }
+    catch(err){
+        console.log(err)
+        returnError(err,res)
     }
 })
 

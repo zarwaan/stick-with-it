@@ -22,3 +22,20 @@ export const createHabitsTable = `CREATE TABLE IF NOT EXISTS habits(
     ON UPDATE CASCADE
     ON DELETE CASCADE
 )`;
+
+export const createHabitsLogTable = `CREATE TABLE IF NOT EXISTS habits_log (
+    log_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    habit_id INT NOT NULL,
+    completed_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    completed_date DATE GENERATED ALWAYS AS (DATE(completed_at)) STORED,
+
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    FOREIGN KEY (habit_id) REFERENCES habits(habit_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+
+    UNIQUE KEY unique_habit_day (user_id, habit_id, completed_date)
+)`;

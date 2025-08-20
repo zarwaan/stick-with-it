@@ -26,7 +26,7 @@ class Response {
     }
 }
 
-class AuthError extends Error {
+export class AuthError extends Error {
     constructor(message="Unauthorised!",code=401){
         super(message)
         this.code = code
@@ -34,7 +34,7 @@ class AuthError extends Error {
     }
 }
 
-async function authorise(userId, habitId){
+export async function authorise(userId, habitId){
     const [res] = await conn.query(
         "Select user_id from habits where habit_id = ?",
         [habitId]
