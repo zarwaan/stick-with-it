@@ -33,3 +33,24 @@ export async function logHabit(habitId, userId){
         throw err
     }
 }
+
+export async function checkIfLogged(habitId){
+    try{
+        const [res] = await conn.query(
+            "select * from habits_log where habit_id = ? and completed_date = ?",
+            [
+                habitId,
+                dayjs().format("YYYY-MM-DD")
+            ]
+        );
+        if(res.length === 0){
+           return new Response(true, "Habit not logged", { logged: false }) 
+        }
+        else {
+            return new Response(true, "Habit logged", { logged: true })
+        }
+    }
+    catch(err){
+        throw err
+    }
+}

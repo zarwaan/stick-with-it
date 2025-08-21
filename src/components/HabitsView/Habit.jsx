@@ -1,13 +1,15 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { motion } from "motion/react";
 import { useHabitContext } from "../../providers/HabitProvider";
 import { allHabits } from "./habits";
 import { today } from "../../helpers/calendar";
+import { fetchRequest } from "../../helpers/fetchRequests";
 
 export default function Habit({habit}) {
     const [deleteHover, setDeleteHover] = useState(false);
     const {openHabit} = useHabitContext();
     const { triggerUpdate, currentHabitView, closeHabit, editMode } = useHabitContext();
+    const [logged, setLogged] = useState(false)
 
     const deleteRequest = async () => {
         if(confirm(`Are you sure you want to delete "${habit['habit_title']}"?`)) {
@@ -36,6 +38,52 @@ export default function Habit({habit}) {
         }
     }
 
+    const logHabit = async (e) => {
+        e.stopPropagation();
+        try{
+            const {response, result} = await fetchRequest(
+                'log-habit',
+                JSON.stringify({
+                    habitId: habit.habit_id
+                })
+            );
+            if(response.ok){
+                console.log('completed!')
+                triggerUpdate();
+            }
+            else{
+                console.log(result.message)
+            }
+        }
+        catch(err){
+            console.log("Some error occurred! ")
+            console.log(err)
+        }
+    }
+
+    useEffect(() => {
+        const checkLog = async () => {
+            try{
+                const {response, result} = await fetchRequest('check-logs',
+                    JSON.stringify({habitId: habit.habit_id}),
+                    false
+                );
+                if(response.ok){
+                    setLogged(result.logged)
+                }
+                else{
+                    console.log(result)
+                }
+            }
+            catch(err){
+                console.log(err)
+            }
+        };
+
+        if(habit[today().day.toLowerCase()] === 1)
+            checkLog();
+    },[habit])
+
     return (
         <motion.div className="border border-2 border-green-900 rounded-full flex flex-row p-2 gap-3
                         bg-green-100 cursor-pointer"
@@ -52,11 +100,13 @@ export default function Habit({habit}) {
                 </span>
                 <div className="mr-2 flex flex-row gap-12">
                     {
-                        habit[today().day.toLowerCase()] === 1 &&
+                        habit[today().day.toLowerCase()] === 1 && !logged &&
                         <motion.button className="border-2 p-2 pl-3 pr-3 rounded-lg cursor-pointer
                                                     font-semibold text-white border-black"
                                         style={{backgroundColor: "#008235"}}
-                                        whileHover={{scale:1.1, backgroundColor: "#00b000ff"}}>
+                                        whileHover={{scale:1.1, backgroundColor: "#00b000ff"}}
+                                        onClick={logHabit}
+                                        whileTap={{y:2}}>
                             Mark as completed
                         </motion.button>
                     }

@@ -5,7 +5,7 @@ import session from 'express-session';
 import { deleteUser, getUserDetails, login, register, updateUserDetails } from './CRUD/userOperations.js';
 import bcrypt from 'bcrypt';
 import { AuthError, createNewHabit, deleteHabit, fetchHabit, fetchUserHabits, updateHabit } from './CRUD/habitOperations.js';
-import { logHabit } from './CRUD/habitlogOperations.js';
+import { checkIfLogged, logHabit } from './CRUD/habitlogOperations.js';
 
 const app = express();
 app.use(express.json());
@@ -310,8 +310,8 @@ function returnError(err,res){
 
 app.post('/log-habit',async (req,res) => {
     try{
-        // const {userId} = req.session.user || -1;
-        const {habitId, userId} = req.body;
+        const {userId} = req.session.user || -1;
+        const {habitId} = req.body;
 
         const response = await logHabit(habitId, userId);
         if(response.success){
@@ -319,6 +319,23 @@ app.post('/log-habit',async (req,res) => {
         }
         else{
             return res.status(409).json(response)
+        }
+    }
+    catch(err){
+        console.log(err)
+        returnError(err,res)
+    }
+})
+
+app.post('/check-logs', async (req, res) => {
+    try{
+        const {habitId} = req.body;
+        const response = await checkIfLogged(habitId)
+        if(response.success){
+            return res.status(200).json({logged: response.result.logged})
+        }
+        else{ //how
+            return res.status(500).json(response)
         }
     }
     catch(err){
