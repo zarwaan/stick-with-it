@@ -5,10 +5,15 @@
   "type": "module",
   "scripts": {
     "dev": "cross-env NODE_ENV=development vite",
-    "server": "cross-env NODE_ENV=development node server/app.js",
+    "server": "cross-env NODE_ENV=development nodemon server/app.js",
     "build": "cross-env NODE_ENV=production vite build",
     "lint": "eslint .",
     "preview": "vite preview"
+  },
+  "nodemonConfig": {
+    "ext": "js,json",
+    "watch": ["server"],
+    "ignore": ["db/","test/"]
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.11",
@@ -23,6 +28,7 @@
     "lucide-react": "^0.536.0",
     "motion": "^12.23.12",
     "mysql2": "^3.14.3",
+    "nodemon": "^3.1.10",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.8.0",

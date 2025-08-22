@@ -15,7 +15,7 @@ export default function NavBar() {
                     }
         },
         graph: {
-            name: "Graph",
+            name: "Stats",
             number: 1,
             onclick: () => {
                         showGraphView();

@@ -54,3 +54,19 @@ export async function checkIfLogged(habitId){
         throw err
     }
 }
+
+export async function getHabitLogs(habitId){
+    try{
+        const [res] = await conn.query(
+            "select * from habits_log where habit_id = ?",
+            [habitId]
+        );
+        if(res.length===0){
+            return new Response(true, "Habit never logged", res)
+        }
+        return new Response(true, "Found", {res, count:res.length})
+    }
+    catch(err){
+        throw err
+    }
+}

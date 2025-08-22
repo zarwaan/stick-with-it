@@ -27,3 +27,5 @@ dist-ssr
 test
 testUserCreds.txt
 misc
+todo
+.todo
