@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "cross-env NODE_ENV=development vite",
+    "client": "cross-env NODE_ENV=development vite",
     "server": "cross-env NODE_ENV=development nodemon server/app.js",
+    "devserver": "cross-env NODE_ENV=development node server/app.js",
     "build": "cross-env NODE_ENV=production vite build",
     "lint": "eslint .",
     "preview": "vite preview"

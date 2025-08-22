@@ -6,7 +6,7 @@ import { deleteUser, getUserDetails, login, register, updateUserDetails } from '
 import bcrypt from 'bcrypt';
 import { AuthError, createNewHabit, deleteHabit, fetchHabit, fetchUserHabits, updateHabit } from './CRUD/habitOperations.js';
 import { checkIfLogged, getHabitLogs, logHabit } from './CRUD/habitlogOperations.js';
-import { getStreaks } from './CRUD/statistics.js';
+import { getStats } from './CRUD/statistics.js';
 
 const app = express();
 app.use(express.json());
@@ -375,16 +375,22 @@ app.get('/habit/:id/stats',async (req,res) => {
     try{
         const habitId = req.params.id;
         const fields = req.query.fields.split(',');
-        const statConfig = {
-            streak: getStreaks
-        }
-        const result = {};
-        await Promise.all(fields.map(async field => {
-            if(statConfig[field])
-                result[field] = await statConfig[field](habitId)
-        }))
 
-        return res.status(200).json(new Response(true, "Found", result))
+        // const statConfig = {
+        //     streak: getStreaks
+        // }
+        // const result = {};
+        // await Promise.all(fields.map(async field => {
+        //     if(statConfig[field])
+        //         result[field] = await statConfig[field](habitId)
+        // }))
+        const response = await getStats(habitId, fields)
+        if(response.success){
+            return res.status(200).json(response)
+        }
+        else{
+            return res.status(404).json(response)
+        }
     }
     catch(err){
         returnError(err,res)
