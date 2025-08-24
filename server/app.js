@@ -216,9 +216,10 @@ app.post('/fetch-habits',async (req,res) => {
         
         // postman
         // const {userId} = req.body;
+        const requireTodayLog = (req.query.requireTodayLog && req.query.requireTodayLog>0) || false
         const day = req.body.day || null;
 
-        const response = await fetchUserHabits(userId,day)
+        const response = await fetchUserHabits(userId,day,requireTodayLog)
         if(response.success){
             console.log("\nFound")
             console.log(response)

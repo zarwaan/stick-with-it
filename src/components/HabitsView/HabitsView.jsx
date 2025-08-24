@@ -27,7 +27,7 @@ function HabitList({ isLoading, error, habits, showAll, today }) {
     if (habits) {
         if (habits.result.length === 0) return <div>Nothing to show!</div>
         return habits.result.map((habit) => {
-            if (showAll || habit[today.toLowerCase()]) {
+            if (showAll || (habit[today.toLowerCase()] && !habit.loggedToday)) {
                 return <Habit habit={habit} key={habit.habit_id} />
             }
             return null
@@ -41,7 +41,7 @@ export default function HabitsView() {
     const {loggedIn} = useAuthContext();
     const {day} = today();
 
-    const {data: habits, isLoading, error, fetchData: fetchHabits} = useFetch(`/fetch-habits`,{
+    const {data: habits, isLoading, error, fetchData: fetchHabits} = useFetch(`/fetch-habits?requireTodayLog=1`,{
     method: 'POST',
     credentials: 'include',
     },false);
@@ -66,7 +66,7 @@ export default function HabitsView() {
                 <ShowAllToggle></ShowAllToggle>
             </div>
             <div className="flex flex-row h-[100%] border-blue-700 overflow-hidden gap-2 pb-1">
-                <div className=" border-red-700 pr-3 flex flex-1 flex-col gap-3 h-[100%] overflow-y-scroll" id="habit-list">
+                <div className=" border-red-700 pr-3 flex flex-1 flex-col gap-3 h-[100%] overflow-y-scroll overflow-x-hidden" id="habit-list">
                     {
                         loggedIn ? 
                         <HabitList

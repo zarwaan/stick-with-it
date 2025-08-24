@@ -17,6 +17,7 @@
 
 import { convertToDatabaseStorableString, convertToEmoji } from "../../src/helpers/emojiManipulation.js";
 import { conn } from "../db/dbConn.js";
+import { checkIfLogged } from "./habitlogOperations.js";
 
 class Response {
     constructor(success,message,result){
@@ -62,7 +63,7 @@ export async function createNewHabit(userId, title, emoji, dayArray){
     }
 }
 
-export async function fetchUserHabits(userId, day=null){
+export async function fetchUserHabits(userId, day=null, requireTodayLog=false){
     const query = 
     day ?
     `select * from habits where user_id = ? and ${day} = ?` :
@@ -74,16 +75,24 @@ export async function fetchUserHabits(userId, day=null){
             return new Response(true,"No habits to show!",res)
         }
         else{
-            return new Response(true,"Found successfully",
-                res.map((result) => { 
-                    return { 
-                        ...result, 
-                        habit_emoji: convertToEmoji(result['habit_emoji'])
-                    }
-                })
-            )
+            const habits = await Promise.all(res.map(async (result) => { 
+                                let toReturn = {
+                                    ...result, 
+                                    habit_emoji: convertToEmoji(result['habit_emoji'])
+                                }
+                                if(requireTodayLog)
+                                {
+                                    const loggedToday = await checkIfLogged(result.habit_id);
+                                    toReturn = {
+                                        ...toReturn,
+                                        loggedToday: loggedToday.result.logged
+                                    }
+                                }
+                                return toReturn
+                            }))
+            return new Response(true,"Found successfully",habits)
         }
-    }
+    } 
     catch(err){
         throw new Response(false,"Database error",null)
     }

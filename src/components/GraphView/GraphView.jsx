@@ -73,7 +73,7 @@ export default function GraphView() {
                     <div className="w-25/100 flex">
                         <StatBox auto={false}>
                             <div className="flex flex-col gap-2">
-                                <div className="text-xl font-semibold">Accuracy</div>
+                                <div className="text-xl font-semibold">Completion Rate</div>
                                 <div className="w-7/10 m-auto   ">
                                     <ProgressRing stroke={18} progress={stats ? Math.round(stats.result.completed * 100 / stats.result.expected) : 0}></ProgressRing>
                                 </div>
