@@ -1,11 +1,46 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import { useAuthContext } from "./AuthProvider";
+import useFetch from "../hooks/useFetch";
 
 const HabitListContext = createContext();
 
 export default function HabitListProvider({children}) {
+    const {loggedIn} = useAuthContext();
+    const [allHabits, setAllHabits] = useState([]);
+    const [habitsUpdated, setHabitsUpdated] = useState(false);
+
+    const triggerUpdate = () => {
+        setHabitsUpdated(prev => prev + 1)
+    }
+
+    const {data: habits, 
+            isLoading: habitsLoading, 
+            error: habitsError, 
+            fetchData: fetchHabits
+        } = useFetch(`/fetch-habits?requireTodayLog=1`,
+                        {
+                            method: 'POST',
+                            credentials: 'include',
+                        },
+                        false
+                    );
+    
+    useEffect(() => {
+        if(loggedIn){
+            fetchHabits();
+        }
+    },[loggedIn, habitsUpdated])
+
+    useEffect(() => {
+        if(habits){
+            setAllHabits(habits.result)
+        }
+    },[habits])
 
     return (
-        <HabitListContext.Provider value={{loggedIn, userData, login, logout}}>
+        <HabitListContext.Provider value={{
+            allHabits, habitsError, habitsLoading, triggerUpdate
+        }}>
             {children}
         </HabitListContext.Provider>
     )

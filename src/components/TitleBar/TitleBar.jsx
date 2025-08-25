@@ -11,7 +11,7 @@ export default function TitleBar(){
         setIsAuth(true) : setIsAuth(false)
     },[location])
     return(
-        <div className="pt-2 flex flex-row justify-between">
+        <div className="pt-2 flex flex-row justify-between pb-2">
             <AppName></AppName>
             {isAuth ? null : <AuthStatus></AuthStatus>}
         </div>

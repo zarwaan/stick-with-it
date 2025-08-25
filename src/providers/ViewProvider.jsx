@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 const ViewContext = createContext();
 
@@ -25,6 +25,8 @@ export default function ViewProvider({children}) {
         setView("glance");
         setPos(3);
     }
+
+    // useEffect(() => showGraphView(),[]);
 
     return (
         <ViewContext.Provider value={{

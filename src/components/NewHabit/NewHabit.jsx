@@ -7,10 +7,12 @@ import { checkHabitNameValidity, checkIfEmoji } from "../../helpers/errorChecks"
 import InputField from "./InputField";
 import useFetch from "../../hooks/useFetch";
 import { useNavigate } from "react-router-dom";
+import { useHabitListContext } from "../../providers/HabitListProvider";
 
 export default function NewHabit() {
     const [errorMessage, setErrorMessage] = useState(null);
     const navigate = useNavigate();
+    const {triggerUpdate} = useHabitListContext();
 
     const [data, setData] = useState({
         title: "",
@@ -55,6 +57,7 @@ export default function NewHabit() {
             const result = await response.json();
             if(response.ok){
                 console.log(mergedData)
+                triggerUpdate();
                 navigate('/')
             }
             else{

@@ -6,9 +6,11 @@ import MarkedDay from "./MarkedDay";
 import { useEffect, useState } from "react";
 import { allHabits } from "./habits";
 import { pre, title } from "motion/react-client";
+import { useHabitListContext } from "../../providers/HabitListProvider";
 
 export default function HabitDetails() {
-    const {currentHabitView, closeHabit, editMode, setEditMode, triggerUpdate, showAll} = useHabitContext();
+    const {currentHabitView, closeHabit, editMode, setEditMode} = useHabitContext();
+    const {triggerUpdate} = useHabitListContext();
 
     const [days, setDays] = useState(week.map((day) => currentHabitView[day.toLowerCase()]) || null)
     const [habitData, setHabitData] = useState({

@@ -12,6 +12,17 @@ import Error from "../utils/Error";
 import useFetch from "../../hooks/useFetch";
 import Loader from "../utils/Loader";
 import { today } from "../../helpers/calendar";
+import { useHabitListContext } from "../../providers/HabitListProvider";
+import InfoMessage from "../utils/InfoMessage";
+import { ListCheck, ListChecks, StickyNote, UserLock } from "lucide-react";
+
+function Message({icon,message}) {
+    return (
+        <div className="pt-10 text-2xl">
+            <InfoMessage IconToShow={icon} message={message} iconSize={50} strokeWidth={1}/>
+        </div>
+    )
+}
 
 function HabitList({ isLoading, error, habits, showAll, today }) {
     if (isLoading) {
@@ -25,32 +36,56 @@ function HabitList({ isLoading, error, habits, showAll, today }) {
         )
     }
     if (habits) {
-        if (habits.result.length === 0) return <div>Nothing to show!</div>
-        return habits.result.map((habit) => {
-            if (showAll || (habit[today.toLowerCase()] && !habit.loggedToday)) {
+        if(habits.length === 0) 
+            return <Message icon={StickyNote} message={"You dont have any habits!"}/>
+        
+        let todayCount = 0, logCount = 0;
+        
+        const displayHabits = habits.map((habit) => {
+            if (showAll) {
+                todayCount=-1;
                 return <Habit habit={habit} key={habit.habit_id} />
+            }
+            else{
+                if((habit[today.toLowerCase()]))
+                {
+                    todayCount++
+                    if(habit.loggedToday) logCount++
+                    else return <Habit habit={habit} key={habit.habit_id} />
+                }
             }
             return null
         })
+
+        console.log(todayCount)
+
+        if(todayCount===0)
+            return <Message icon={StickyNote} message={"You don't have habits for today!"}/>
+        
+        if(logCount===todayCount)
+            return <Message icon={ListChecks} message={"You have completed all habits for today!"}/>
+
+        return displayHabits
     }
     return null
 }
 
 export default function HabitsView() {
-    const {showAll, sideBarOpen, habitsUpdated} = useHabitContext();
+    const {showAll, sideBarOpen} = useHabitContext();
+    const {allHabits, habitsLoading, habitsError} = useHabitListContext();
     const {loggedIn} = useAuthContext();
     const {day} = today();
 
-    const {data: habits, isLoading, error, fetchData: fetchHabits} = useFetch(`/fetch-habits?requireTodayLog=1`,{
-    method: 'POST',
-    credentials: 'include',
-    },false);
+    // const {data: habits, isLoading, error, fetchData: fetchHabits} = useFetch(`/fetch-habits?requireTodayLog=1`,{
+    // method: 'POST',
+    // credentials: 'include',
+    // },false);
 
-    useEffect(() => {
-        if(loggedIn) {
-            fetchHabits();
-        }
-    },[loggedIn,habitsUpdated])
+    // useEffect(() => {
+    //     if(loggedIn) {
+    //         fetchHabits();
+    //     }
+    // },[loggedIn,habitsUpdated])
 
     return (
         <div className="flex flex-col p-2 h-full gap-3 relative">
@@ -60,7 +95,7 @@ export default function HabitsView() {
                         showAll ?
                         "All habits:"
                         :
-                        day+"'s habits:"
+                        day+"'s habits left:"
                     }
                 </div>
                 <ShowAllToggle></ShowAllToggle>
@@ -70,16 +105,14 @@ export default function HabitsView() {
                     {
                         loggedIn ? 
                         <HabitList
-                            isLoading={isLoading}
-                            error={error}
-                            habits={habits}
+                            isLoading={habitsLoading}
+                            error={habitsError}
+                            habits={allHabits}
                             showAll={showAll}
                             today={day}
                         />
                         :
-                        <div className="pt-10">
-                            <NotLoggedIn fontSize={20} iconSize={50} strokeWidth={1}></NotLoggedIn>
-                        </div>
+                        <Message icon={UserLock} message={"Log in to view your habits!"}/>
                     }
                 </div>
 

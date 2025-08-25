@@ -6,8 +6,9 @@ export default function AuthStatus({children}){
     const {loggedIn} = useAuthContext();
     return (
         <div className="mr-2 flex items-center">
-            {loggedIn && <UserInfo></UserInfo>}
-            {!loggedIn && <LoginButton></LoginButton>}
+            {loggedIn===true && <UserInfo></UserInfo>}
+            {loggedIn===false && <LoginButton></LoginButton>}
+            {loggedIn===null && null}
         </div>
     )
 }

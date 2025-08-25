@@ -4,11 +4,12 @@ import { useHabitContext } from "../../providers/HabitProvider";
 import { allHabits } from "./habits";
 import { today } from "../../helpers/calendar";
 import { fetchRequest } from "../../helpers/fetchRequests";
+import { useHabitListContext } from "../../providers/HabitListProvider";
 
 export default function Habit({habit}) {
     const [deleteHover, setDeleteHover] = useState(false);
-    const {openHabit} = useHabitContext();
-    const { triggerUpdate, currentHabitView, closeHabit, editMode } = useHabitContext();
+    const {openHabit, currentHabitView, closeHabit, editMode} = useHabitContext();
+    const { triggerUpdate} = useHabitListContext();
     const [isExiting, setIsExiting] = useState(false)
     const animationTime = 2.3
     const [x, setX] = useState(0)
