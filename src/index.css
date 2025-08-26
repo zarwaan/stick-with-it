@@ -40,30 +40,36 @@
   align-items: center;
 }
 
-#habit-list::-webkit-scrollbar-track {
+.custom-scroll::-webkit-scrollbar-track {
 	background: none !important;
 }
 
-#habit-list::-webkit-scrollbar {
+.custom-scroll::-webkit-scrollbar {
   width: 7px;
 }
 
-#habit-list::-webkit-scrollbar-thumb {
+.custom-scroll::-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, 0.3); /* or make this transparent too */
   border-radius: calc(1px * infinity);
-  opacity: 0;
 }
 
-#habit-list::-webkit-scrollbar-thumb:hover {
+.custom-scroll::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 0, 0, 0.6); 
 }
 
-#habit-list::-webkit-scrollbar-track-piece:end {
-  margin-right: 100px; 
+.custom-scroll::-webkit-scrollbar-track-piece:end {
+  margin-right: 4px;
+  margin-bottom: 4px; 
 }
 
-#habit-list::-webkit-scrollbar-track-piece:start {
-  margin-left: 100px; 
+.custom-scroll::-webkit-scrollbar-track-piece:start {
+  margin-top: 4px; 
+  margin-left: 4px;
+}
+
+.custom-scroll {
+  overflow-y: auto;
+  scrollbar-gutter: stable;
 }
 /* .border{
   border: none !important;

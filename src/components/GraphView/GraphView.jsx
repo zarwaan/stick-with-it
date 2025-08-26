@@ -6,11 +6,16 @@ import { useAuthContext } from "../../providers/AuthProvider";
 import { useEffect, useState } from "react";
 import Loader from "../utils/Loader";
 import Error from "../utils/Error";
+import { useHabitListContext } from "../../providers/HabitListProvider"
+import Dropdown from "../utils/Dropdown/Dropdown";
+import { useStatsContext } from "../../providers/StatsProvider";
 
 export default function GraphView() {
     const {loggedIn} = useAuthContext();
+    const {allHabits} = useHabitListContext();
 
-    const [habitId, setHabitId] = useState(3)
+    const {habitId, setHabitId} = useStatsContext();
+    const [toShow, setToShow] = useState(null)
     const {data:stats, isLoading, error, fetchData:fetchStats} = useFetch(
         `/habit/${habitId}/stats?fields=streak,expected,missed,completed`,
         {method: 'GET'},
@@ -19,9 +24,17 @@ export default function GraphView() {
     const [statsRowConfig, setStatsRowConfig] = useState([]);
 
     useEffect(() => {
-        if(loggedIn){
-            fetchStats();
+        if(allHabits.length > 0){
+            setHabitId(allHabits[0].habit_id)
         }
+    },[allHabits])
+
+    useEffect(() => {
+        if(loggedIn && habitId){
+            fetchStats();
+            setToShow(habitDisplay());
+        }
+        
     },[loggedIn,habitId])
 
     useEffect(() => {
@@ -50,9 +63,32 @@ export default function GraphView() {
             ])
     },[stats])
 
+    const habitDisplay = () => { 
+        const habit = allHabits.find(habit => habit.habit_id===habitId)
+        return `${habit.habit_title} ${habit.habit_emoji}` 
+    };
+
     return (
         <div className="flex flex-col w-full p-1">
-            {isLoading && <Loader></Loader>}
+            <div className="m-auto mb-2 w-full">
+                <Dropdown>
+                    <Dropdown.Root toShow={toShow}>
+                        <Dropdown.List>
+                            {
+                                allHabits.map((habit) => {
+                                    return (
+                                        <Dropdown.Item key={habit.habit_id}
+                                                        onclick={()=>setHabitId(habit.habit_id)}>
+                                            {habit.habit_title} {habit.habit_emoji}
+                                        </Dropdown.Item>
+                                    )
+                                })
+                            }
+                        </Dropdown.List>
+                    </Dropdown.Root>
+                </Dropdown>
+            </div>
+            {/* {isLoading && <Loader></Loader>} */}
             {error && 
                 <div className="pt-10 text-xl">
                     <Error errorText="Could not load data" />
@@ -74,7 +110,7 @@ export default function GraphView() {
                         <StatBox auto={false}>
                             <div className="flex flex-col gap-2">
                                 <div className="text-xl font-semibold">Completion Rate</div>
-                                <div className="w-7/10 m-auto   ">
+                                <div className="w-7/10 m-auto">
                                     <ProgressRing stroke={18} progress={stats ? Math.round(stats.result.completed * 100 / stats.result.expected) : 0}></ProgressRing>
                                 </div>
                             </div>
