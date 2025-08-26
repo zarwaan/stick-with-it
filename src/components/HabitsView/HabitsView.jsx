@@ -103,7 +103,7 @@ export default function HabitsView() {
             <div className="flex flex-row h-[100%] border-blue-700 overflow-hidden gap-2 pb-1">
                 <div className="custom-scroll border-red-700 pr-3 flex flex-1 flex-col gap-3 h-[100%] overflow-y-scroll overflow-x-hidden">
                     {
-                        loggedIn ? 
+                        // loggedIn ? 
                         <HabitList
                             isLoading={habitsLoading}
                             error={habitsError}
@@ -111,8 +111,8 @@ export default function HabitsView() {
                             showAll={showAll}
                             today={day}
                         />
-                        :
-                        <Message icon={UserLock} message={"Log in to view your habits!"}/>
+                        // :
+                        // <Message icon={UserLock} message={"Log in to view your habits!"}/>
                     }
                 </div>
 

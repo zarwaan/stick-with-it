@@ -1,10 +1,16 @@
 import { motion } from "motion/react";
+import { useEffect, useState } from "react";
 
 export default function ProgressRing({progress, stroke=10}) {
+    const [progressVal, setProgressVal] = useState(progress);
+    useEffect(() => {
+        setProgressVal(progress)
+    },[progress]);
+    
     const radius = 50;
     const normalizedRadius = radius - stroke / 2;
     const circumference = 2 * Math.PI * normalizedRadius;
-    const strokeDashOffset = circumference - ((progress/100) * circumference)
+    const strokeDashOffset = circumference - ((progressVal/100) * circumference)
 
     return(
         <svg viewBox="0 0 100 100" height={"100%"} width={"100%"}>
@@ -42,7 +48,7 @@ export default function ProgressRing({progress, stroke=10}) {
                     fill="#000000"
                     fontWeight={700}
             >
-                <tspan x={"50%"} dy={"0"}>{progress}%</tspan>
+                <tspan x={"50%"} dy={"0"}>{progressVal}%</tspan>
             </text>
         </svg>
     )

@@ -121,7 +121,7 @@ export default function Habit({habit}) {
                 </span>
             </motion.div>
             <div className="border- border-blue-700 flex-1 flex items-center justify-between">
-                <span className="w-fit border-\ h-fit text-2xl font-semibold">
+                <span className="w-fit max-w-68/100 border-\ h-fit text-2xl font-semibold text-left">
                     {habit['habit_title']}
                 </span>
                 <div className="mr-2 flex flex-row gap-12">
