@@ -1,6 +1,8 @@
 import dayjs from "dayjs";
 import { week } from "../../src/helpers/calendar.js";
 import { conn } from "../db/dbConn.js";
+import { fetchUserHabits } from "./habitOperations.js";
+import { title } from "motion/react-client";
 
 class Response {
     constructor(success,message,result){
@@ -38,7 +40,7 @@ const getExpectedDays = async (habitId) => {
     }
 }
 
-const getMissedDays = async (habitId, expected) => {
+const getMissedAndCompletedDays = async (habitId, expected) => {
     try{   
         const [marked] = await conn.query(
             `select completed_date from habits_log where habit_id = ?`,
@@ -49,14 +51,16 @@ const getMissedDays = async (habitId, expected) => {
                 !marked.some((markedDate) => dayjs(markedDate.completed_date).format("YYYY-MM-DD") === date)
         );
 
-        return missed;
+        const completed = marked.map(date => dayjs(date.completed_date).format("YYYY-MM-DD"))
+
+        return {missed, completed};
     }
     catch(err){
         throw err
     }
 }
 
-const getStreaks= async (expected,missed) => {
+const getStreaks = (expected,missed) => {
     try{
         let currentStreak=0, longestStreak = 0, breakCurrent = false, streak=0;
         expected.forEach((date) => {
@@ -84,41 +88,106 @@ const getStreaks= async (expected,missed) => {
     }
 }
 
-const getExpectedDaysNumber = (expected,missed) => {
+const getExpectedDaysNumber = (expected) => {
     return expected.length
 }
 
-const getMissedDaysNumber = (expected,missed) => {
+const getMissedDaysNumber = (missed) => {
     return missed.length
 }
 
-const getCompletedDaysNumber = (expected,missed) => {
-    return expected.length - missed.length
+const getCompletedDaysNumber = (completed) => {
+    return completed.length
+}
+
+const getDayWiseBreakup = (completed, missed) => {
+    const completedCount = Array(7).fill(0);
+    const missedCount = Array(7).fill(0);
+    completed.forEach(date => {
+        completedCount[
+            (dayjs(date).day()+6)%7
+        ]++
+    });
+    missed.forEach(date => {
+        missedCount[
+            (dayjs(date).day()+6)%7
+        ]++
+    });
+    return {completedCount, missedCount}
 }
 
 export async function getStats(habitId, fields){
-    const statConfig = {
-        streak: getStreaks,
-        expected: getExpectedDaysNumber,
-        missed: getMissedDaysNumber,
-        completed: getCompletedDaysNumber
-    }
-
     try{
         const expected = await getExpectedDays(habitId);
         if(!expected) return new Response(false, "Habit doesn't exist", null)
-        const missed = await getMissedDays(habitId,expected);
+        const {missed, completed} = await getMissedAndCompletedDays(habitId,expected);
         
+        const statConfig = {
+            streak:  () => getStreaks(expected,missed),
+            expected: () => getExpectedDaysNumber(expected),
+            missed: () => getMissedDaysNumber(missed),
+            completed: () => getCompletedDaysNumber(completed),
+            dayBreakUp: () => getDayWiseBreakup(completed,missed)
+        }
+
         const result = {};
         
-        await Promise.all(fields.map(async field => {
-            if(statConfig[field])
-                result[field] = await statConfig[field](expected,missed)
-        }))
+        if(fields)
+            fields.map(field => {
+                if(statConfig[field])
+                    result[field] = statConfig[field]()
+            })
+        else
+            Object.keys(statConfig).map(field => {
+                result[field] = statConfig[field]()
+            })
 
         return new Response(true, "Found", result)
     }
     catch(err){
         throw err
+    }
+}
+
+export async function getAllStats(userId, fields=["streak","expected","missed","completed"]){
+    const consistency = (stats) => {
+        let most={id:0, rate:0}, least={id:0, rate:100};
+        stats.forEach(stat => {
+            const rate = stat.completed / stat.expected * 100
+            if(rate>=most.rate){
+                most = {
+                    id: stat.id,
+                    rate: rate
+                }
+            }
+            if(rate<=least.rate){
+                least = {
+                    id: stat.id,
+                    rate: rate
+                }
+            }
+        })
+        return {most, least}
+    } 
+
+    try{
+        const allHabits = (await fetchUserHabits(userId)).result;
+        const allStats = await Promise.all(
+            allHabits.map(async habit => {
+                const result = (await getStats(habit.habit_id, fields)).result
+                return {
+                    id: habit.habit_id,
+                    title: habit.habit_title,
+                    ...result
+                }
+            })
+        )
+        // console.dir(allStats,{depth: null})
+        const {most, least} = consistency(allStats);
+        console.log(most)
+        console.log(least)
+    }
+    catch(err){
+        console.error(err)
     }
 }

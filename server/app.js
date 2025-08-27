@@ -305,6 +305,7 @@ app.post('/update-habit', async (req,res) => {
 })
 
 function returnError(err,res){
+    console.log(err);
     if(err instanceof AuthError)
         return res.status(401).json(err)
     return res.status(500).json(err)
@@ -375,7 +376,7 @@ class Response {
 app.get('/habit/:id/stats',async (req,res) => {
     try{
         const habitId = req.params.id;
-        const fields = req.query.fields.split(',');
+        const fields = req.query.fields?.split(',') || null;
 
         // const statConfig = {
         //     streak: getStreaks
