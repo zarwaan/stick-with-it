@@ -116,6 +116,102 @@ const getDayWiseBreakup = (completed, missed) => {
     return {completedCount, missedCount}
 }
 
+const getRollingRate = (exp, com) => {
+    const expected = [...exp].reverse();
+    const completed = [...com].reverse();
+
+    if(expected.length < 6) return [];
+    const windowLength = expected.length > 14 ? 7 : 3;
+
+    const cumulativeRate = [], rollingRateOverAll = [], rollingRateOverExpected = [];
+    let num = 0, den = 0;
+
+    const round = num => Math.round(num * 100)
+
+    const getCumulative = (date) => {
+        den++;
+        if(completed.includes(date)){
+            cumulativeRate.push({
+                date,
+                rate: round((++num)/den)
+            })
+        }
+        else{
+            cumulativeRate.push({
+                date,
+                rate: round(num/den)
+            })
+        }
+    }
+
+    const getRollingOverAll = (date) => {
+        // make start and end
+        const current = dayjs(date);
+        if(current.diff(dayjs(expected[0]),'days') < windowLength - 1) return;
+        let windowAgo = current.subtract(windowLength-1, 'days')
+
+        // make window
+        const window = [];
+        while(windowAgo.isBefore(current) || windowAgo.isSame(current)){
+            window.push(windowAgo.format("YYYY-MM-DD"));
+            windowAgo = windowAgo.add(1, 'day')
+        }
+        
+        // get rate
+        let num = 0, den = 0;
+        window.forEach(date => {
+            if(expected.includes(date)){
+                den++;
+            }
+            if(completed.includes(date)){
+                num++;
+            }
+        });
+
+        if(den===0) return;
+        rollingRateOverAll.push({date, rate:round(num/den)})
+    }
+
+    const getRollingOverExpected = (date,index) => {
+        if(index - windowLength + 1 < 0) return;
+        const start = index - windowLength + 1;
+        const end = index;
+        const window = [];
+
+        for(let i = start;i<=end;i++){
+            window.push(expected[i])
+        }
+
+        let num = 0;
+        window.forEach(date => {
+            if(completed.includes(date)) num++;
+        })
+
+        rollingRateOverExpected.push({date, rate: round(num/windowLength)})
+    }
+
+    expected.forEach((date,index) => {
+        getCumulative(date);
+        getRollingOverAll(date);
+        getRollingOverExpected(date,index)
+    })
+
+    const final = 
+    cumulativeRate.map(obj => {
+        const rate1 = rollingRateOverAll.find(o => o.date === obj.date)?.rate ?? 0
+        const rate2 = rollingRateOverExpected.find(o => o.date === obj.date)?.rate ?? 0
+        return {
+            date: obj.date,
+            cumulative: obj.rate,
+            rollingOverAll: rate1,
+            rollingOverExpected: rate2
+        }
+    })
+
+    // return {cumulativeRate, rollingRateOverAll, rollingRateOverExpected}
+    return final
+}
+
 export async function getStats(habitId, fields){
     try{
         const expected = await getExpectedDays(habitId);
@@ -127,7 +223,8 @@ export async function getStats(habitId, fields){
             expected: () => getExpectedDaysNumber(expected),
             missed: () => getMissedDaysNumber(missed),
             completed: () => getCompletedDaysNumber(completed),
-            dayBreakUp: () => getDayWiseBreakup(completed,missed)
+            dayBreakUp: () => getDayWiseBreakup(completed,missed),
+            rolling: () => getRollingRate(expected,completed)
         }
 
         const result = {};

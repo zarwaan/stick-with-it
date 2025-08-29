@@ -11,6 +11,7 @@ import Dropdown from "../utils/Dropdown/Dropdown";
 import { useStatsContext } from "../../providers/StatsProvider";
 import SWIStackedBarChart from "../utils/Charts/SWIStackedBarChart";
 import { week } from "../../helpers/calendar";
+import SWIAreaChart from "../utils/Charts/SWIAreaChart";
 
 export default function GraphView() {
     const {loggedIn} = useAuthContext();
@@ -25,6 +26,7 @@ export default function GraphView() {
     );
     const [stackedChartData, setStackedChartData] = useState([]);
     const [statsRowConfig, setStatsRowConfig] = useState([]);
+    const [areaChartData, setAreaChartData] = useState([]);
 
     const makeStackedChartData = data => {
         const chartData = 
@@ -75,6 +77,7 @@ export default function GraphView() {
                 },
             ])
             makeStackedChartData(stats.result);
+            setAreaChartData(stats.result.rolling);
         }
     },[stats])
 
@@ -146,6 +149,16 @@ export default function GraphView() {
                         }
                     </div>
                     <div className="">
+                        {
+                            areaChartData.length > 0 &&
+                            <SWIAreaChart dataArg={areaChartData} xVal="date" n={3}
+                            yVals={[
+                                "cumulative",     
+                                "rollingOverAll", 
+                                "rollingOverExpected"
+                            ]}  
+                            yLabel="Completion Rate" />
+                        }
                     </div>
                 </div>
                 </>
