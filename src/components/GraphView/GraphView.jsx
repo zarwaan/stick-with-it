@@ -9,6 +9,8 @@ import Error from "../utils/Error";
 import { useHabitListContext } from "../../providers/HabitListProvider"
 import Dropdown from "../utils/Dropdown/Dropdown";
 import { useStatsContext } from "../../providers/StatsProvider";
+import SWIStackedBarChart from "../utils/Charts/SWIStackedBarChart";
+import { week } from "../../helpers/calendar";
 
 export default function GraphView() {
     const {loggedIn} = useAuthContext();
@@ -17,11 +19,22 @@ export default function GraphView() {
     const {habitId, setHabitId} = useStatsContext();
     const [toShow, setToShow] = useState(null)
     const {data:stats, isLoading, error, fetchData:fetchStats} = useFetch(
-        `/habit/${habitId}/stats?fields=streak,expected,missed,completed`,
+        `/habit/${habitId}/stats`,
         {method: 'GET'},
         false
     );
+    const [stackedChartData, setStackedChartData] = useState([]);
     const [statsRowConfig, setStatsRowConfig] = useState([]);
+
+    const makeStackedChartData = data => {
+        const chartData = 
+        week.map((day,index) => ({
+            name: day+"s",
+            Completed: data.dayBreakUp.completedCount[index],
+            Missed: data.dayBreakUp.missedCount[index]
+        }));
+        setStackedChartData(chartData);
+    }
 
     useEffect(() => {
         if(allHabits.length > 0){
@@ -38,7 +51,7 @@ export default function GraphView() {
     },[loggedIn,habitId])
 
     useEffect(() => {
-        if(stats)
+        if(stats) {
             setStatsRowConfig([
                 {
                     "statName": "Current streak",
@@ -61,6 +74,8 @@ export default function GraphView() {
                     "statValue": stats.result.missed
                 },
             ])
+            makeStackedChartData(stats.result);
+        }
     },[stats])
 
     const habitDisplay = () => { 
@@ -69,8 +84,8 @@ export default function GraphView() {
     };
 
     return (
-        <div className="flex flex-col w-full p-1">
-            <div className="m-auto mb-2 w-full">
+        <div className="flex flex-col w-full p-1 h-full gap-2">
+            <div className="ml-auto mr-auto w-full z-999">
                 <Dropdown>
                     <Dropdown.Root toShow={toShow}>
                         <Dropdown.List>
@@ -96,6 +111,7 @@ export default function GraphView() {
             }
             {
                 stats && 
+                <>
                 <div className="flex flex-row gap-4">
                     <div className="flex flex-row flex-wrap flex-1 flex-center" style={{gap: "10px"}}>
                     {
@@ -121,6 +137,19 @@ export default function GraphView() {
                         </StatBox>
                     </div>
                 </div>
+                <div className="flex flex-row *:w-1/2 h-full">
+                    <div className="">
+                        {
+                            stackedChartData.length > 0 &&
+                            <SWIStackedBarChart dataArg={stackedChartData} xTick={{fontSize: 10}} 
+                            xVal="name" y1Val="Completed" y2Val="Missed" yLabel="Number of days"/>
+                        }
+                    </div>
+                    <div className="">
+                    </div>
+                </div>
+                </>
+
             }
         </div>
     )
