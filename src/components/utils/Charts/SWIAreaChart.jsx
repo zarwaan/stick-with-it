@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react"
 import { Area, AreaChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
-export default function SWIAreaChart({dataArg, n=1, xVal="x", yVals=["y1"], tooltip=true, yLabel=""}) {
+export default function SWIAreaChart({dataArg, xVal="x", yVals=["y1"], tooltip=true, yLabel="", xTick}) {
     const [data,setData] = useState(dataArg);
     useEffect(() => setData(dataArg),[dataArg]);
+
+    const n = yVals.length;
     
     const Gradient = ({id, color}) => (
         <linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
@@ -37,7 +39,11 @@ export default function SWIAreaChart({dataArg, n=1, xVal="x", yVals=["y1"], tool
     
     return(
         <ResponsiveContainer>
-            <AreaChart data={data} width={"100%"} minHeight={"100%"}>
+            <AreaChart data={data} width={"100%"} minHeight={"100%"} margin={{
+                left: -4,
+                top: 5,
+                right: 5
+            }}>
                 <defs>
                     {
                         Array.from({length: n}).map((_,index) => (
@@ -45,8 +51,8 @@ export default function SWIAreaChart({dataArg, n=1, xVal="x", yVals=["y1"], tool
                         ))
                     }
                 </defs>
-                <XAxis dataKey={xVal}></XAxis>
-                <YAxis label={{value: yLabel, angle: -90, dx: -10}}/>
+                <XAxis dataKey={xVal} tick={xTick}></XAxis>
+                <YAxis label={{value: yLabel, angle: -90, dx: -15}}/>
                 <CartesianGrid strokeDasharray="3 3" />
                 {tooltip && <Tooltip contentStyle={{borderRadius: "15px",backgroundColor: "#ffffffee"}}/>}
                 <Legend />

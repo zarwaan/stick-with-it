@@ -17,3 +17,10 @@ export function today() {
         day: dayjs().format('dddd')
     }
 }
+
+export function getOrdinalSuffix(num){
+    if(num===1 || (num!==11 && num%10===1)) return 'st'
+    if(num===2 || (num!==12 && num%10===2)) return 'nd'
+    if(num===3 || (num!==13 && num%10===3)) return 'rd'
+    return 'th'
+}

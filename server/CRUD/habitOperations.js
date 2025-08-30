@@ -15,6 +15,7 @@
 // const arrAgain = JSON.parse(idk)
 // const emoji = String.fromCodePoint(...arrAgain)
 
+import dayjs from "dayjs";
 import { convertToDatabaseStorableString, convertToEmoji } from "../../src/helpers/emojiManipulation.js";
 import { conn } from "../db/dbConn.js";
 import { checkIfLogged } from "./habitlogOperations.js";
@@ -48,12 +49,13 @@ export async function authorise(userId, habitId){
 export async function createNewHabit(userId, title, emoji, dayArray){
     try{
         const [res] = await conn.query(
-            "INSERT INTO habits(user_id,habit_title,habit_emoji,monday,tuesday,wednesday,thursday,friday,saturday,sunday) values(?,?,?,?,?,?,?,?,?,?)",
+            "INSERT INTO habits(user_id,habit_title,habit_emoji,monday,tuesday,wednesday,thursday,friday,saturday,sunday,created_date) values(?,?,?,?,?,?,?,?,?,?,?)",
             [
                 userId,
                 title,
                 convertToDatabaseStorableString(emoji),
-                ...dayArray
+                ...dayArray,
+                dayjs().format("YYYY-MM-DD")
             ]
         );
         return new Response(true, "Inserted succesfully", res)

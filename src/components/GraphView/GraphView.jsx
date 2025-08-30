@@ -12,6 +12,8 @@ import { useStatsContext } from "../../providers/StatsProvider";
 import SWIStackedBarChart from "../utils/Charts/SWIStackedBarChart";
 import { week } from "../../helpers/calendar";
 import SWIAreaChart from "../utils/Charts/SWIAreaChart";
+import InfoMessage from "../utils/InfoMessage";
+import { ChartColumnIncreasing } from "lucide-react";
 
 export default function GraphView() {
     const {loggedIn} = useAuthContext();
@@ -27,6 +29,12 @@ export default function GraphView() {
     const [stackedChartData, setStackedChartData] = useState([]);
     const [statsRowConfig, setStatsRowConfig] = useState([]);
     const [areaChartData, setAreaChartData] = useState([]);
+
+    const NotEnoughData = () => (
+        <div className="text-xl font-semibold mt-5">
+            <InfoMessage IconToShow={ChartColumnIncreasing} message={"Not enough data!"} iconSize={30}/>
+        </div>
+    )
 
     const makeStackedChartData = data => {
         const chartData = 
@@ -140,26 +148,35 @@ export default function GraphView() {
                         </StatBox>
                     </div>
                 </div>
-                <div className="flex flex-row *:w-1/2 h-full">
-                    <div className="">
+                <div className="flex flex-row *:w-1/2 h-full gap-3">
+                    <StatBox auto={false}>
                         {
-                            stackedChartData.length > 0 &&
+                            stackedChartData.length > 0 ?
                             <SWIStackedBarChart dataArg={stackedChartData} xTick={{fontSize: 10}} 
                             xVal="name" y1Val="Completed" y2Val="Missed" yLabel="Number of days"/>
+                            :
+                            <NotEnoughData />
                         }
-                    </div>
-                    <div className="">
+                    </StatBox>
+                    <StatBox auto={false}>
                         {
-                            areaChartData.length > 0 &&
-                            <SWIAreaChart dataArg={areaChartData} xVal="date" n={3}
+                            areaChartData.length > 0 ?
+                            <SWIAreaChart dataArg={areaChartData} xVal="date"
                             yVals={[
                                 "cumulative",     
-                                "rollingOverAll", 
-                                "rollingOverExpected"
+                                // "rollingOverAll", 
+                                // "rollingOverExpected"
                             ]}  
-                            yLabel="Completion Rate" />
+                            yLabel="Completion Rate" 
+                            xTick={{
+                                fontSize: 10,
+                            }}
+                            />
+                            :
+                            <NotEnoughData />
                         }
-                    </div>
+                    </StatBox>
+                    {/* </div> */}
                 </div>
                 </>
 

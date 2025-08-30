@@ -21,7 +21,11 @@ export default function SWIStackedBarChart({dataArg, xVal="x", y1Val="y1", y2Val
 
     return(
         <ResponsiveContainer width={"100%"} minHeight={"100%"}>
-            <BarChart data={data}>
+            <BarChart data={data} margin={{
+                left: -6,
+                top: 5,
+                right: 5
+            }}>
                 <CartesianGrid strokeDasharray={"1 1"}/>
                 <XAxis dataKey={xVal} interval={0} tick={xTick}/>
                 <YAxis label={{value: yLabel, angle: -90, dx: -10}}/>

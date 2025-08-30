@@ -1,12 +1,13 @@
 import { Check, Pencil, X } from "lucide-react";
 import { useHabitContext } from "../../providers/HabitProvider"
 import { motion } from "motion/react";
-import { today, week } from "../../helpers/calendar";
+import { getOrdinalSuffix, today, week } from "../../helpers/calendar";
 import MarkedDay from "./MarkedDay";
 import { useEffect, useState } from "react";
 import { allHabits } from "./habits";
 import { pre, title } from "motion/react-client";
 import { useHabitListContext } from "../../providers/HabitListProvider";
+import dayjs from "dayjs";
 
 export default function HabitDetails() {
     const {currentHabitView, closeHabit, editMode, setEditMode} = useHabitContext();
@@ -128,6 +129,19 @@ export default function HabitDetails() {
                                 </MarkedDay>
                             )
                         }
+                    </div>
+                    <div className="text-lg w-fit text-left">
+                        Created on
+                        <span className="">
+                            {
+                                dayjs(currentHabitView.created_date)
+                                .format(`
+                                    MMMM DD[${getOrdinalSuffix(dayjs(currentHabitView.created_date).date())},] YYYY
+                                `)
+                            }
+                        </span>
+                        <br/>
+                        {dayjs().diff(dayjs(currentHabitView.created_date),'days')} days ago
                     </div>
                 </> ) 
                 :

@@ -20,7 +20,7 @@ const getExpectedDays = async (habitId) => {
         )
         if(habit.length === 0) return null
 
-        const startDate = dayjs(habit[0]['creation_date'] || "2025-06-01") 
+        const startDate = dayjs(habit[0]['created_date'] || "2025-08-01") 
         const dtp = week.filter(day => habit[0][day.toLowerCase()]===1)
 
         const today = dayjs();
@@ -141,13 +141,15 @@ const getRollingRate = (exp, com) => {
                 date,
                 rate: round(num/den)
             })
+            
         }
+        return round(num/den)
     }
 
     const getRollingOverAll = (date) => {
         // make start and end
         const current = dayjs(date);
-        if(current.diff(dayjs(expected[0]),'days') < windowLength - 1) return;
+        if(current.diff(dayjs(expected[0]),'days') < windowLength - 1) return 0;
         let windowAgo = current.subtract(windowLength-1, 'days')
 
         // make window
@@ -168,12 +170,13 @@ const getRollingRate = (exp, com) => {
             }
         });
 
-        if(den===0) return;
+        if(den===0) return 0;
         rollingRateOverAll.push({date, rate:round(num/den)})
+        return round(num/den)
     }
 
     const getRollingOverExpected = (date,index) => {
-        if(index - windowLength + 1 < 0) return;
+        if(index - windowLength + 1 < 0) return 0;
         const start = index - windowLength + 1;
         const end = index;
         const window = [];
@@ -188,27 +191,22 @@ const getRollingRate = (exp, com) => {
         })
 
         rollingRateOverExpected.push({date, rate: round(num/windowLength)})
+        return round(num/windowLength)
     }
 
+    const final = [];
     expected.forEach((date,index) => {
-        getCumulative(date);
-        getRollingOverAll(date);
-        getRollingOverExpected(date,index)
+        const rc = getCumulative(date);
+        const rroa = getRollingOverAll(date);
+        const rroe = getRollingOverExpected(date,index);
+        final.push({
+            date,
+            cumulative: rc,
+            rollingOverAll: rroa,
+            rollingOverExpected: rroe
+        });
     })
-
-    const final = 
-    cumulativeRate.map(obj => {
-        const rate1 = rollingRateOverAll.find(o => o.date === obj.date)?.rate ?? 0
-        const rate2 = rollingRateOverExpected.find(o => o.date === obj.date)?.rate ?? 0
-        return {
-            date: obj.date,
-            cumulative: obj.rate,
-            rollingOverAll: rate1,
-            rollingOverExpected: rate2
-        }
-    })
-
-    // return {cumulativeRate, rollingRateOverAll, rollingRateOverExpected}
+    
     return final
 }
 
