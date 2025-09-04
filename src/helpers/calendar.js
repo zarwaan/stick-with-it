@@ -24,3 +24,24 @@ export function getOrdinalSuffix(num){
     if(num===3 || (num!==13 && num%10===3)) return 'rd'
     return 'th'
 }
+
+export function monthList(length = "MMMM"){
+    let mon = dayjs().startOf('year')
+    const months = [];
+    for(let i = 1; i<=12; i++){
+        months.push(mon.format(length))
+        mon = mon.add(1,'month')
+    }
+    return months;
+}
+
+export function yearList(from){
+    let y = dayjs(`${from}-01-01`);
+    const years = [];
+    while(y.format("YYYY")!==dayjs().format("YYYY")){
+        years.push(y.format("YYYY"))
+        y = y.add(1,'year')
+    }
+    years.push(dayjs().format("YYYY"))
+    return years;
+}

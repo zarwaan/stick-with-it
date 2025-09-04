@@ -9,19 +9,20 @@ export default function SWIAreaChart({dataArg, xVal="x", yVals=["y1"], tooltip=t
     
     const Gradient = ({id, color}) => (
         <linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
-            <stop offset={"5%"} stopColor={color} stopOpacity={0.8}/>
-            <stop offset={"100%"} stopColor={color} stopOpacity={0.2}/>
+            <stop offset={"5%"} stopColor={color} stopOpacity={0.4}/>
+            <stop offset={"50%"} stopColor={color} stopOpacity={0.3}/>
+            <stop offset={"95%"} stopColor={color} stopOpacity={0.2}/>
         </linearGradient>
     )
 
     const colorConfig = [
         {
-            id: "line1",
-            color: "#026630"
-        },
-        {
             id: "line2",
             color: "#008235"
+        },
+        {
+            id: "line1",
+            color: "#026630"
         },
         {
             id: "line3",
@@ -60,7 +61,7 @@ export default function SWIAreaChart({dataArg, xVal="x", yVals=["y1"], tooltip=t
                     Array.from({length: n}).map((_,index) => (
                         <Area type={"monotone"} dataKey={yVals[index]} stroke={colorConfig[index].color} 
                                 fillOpacity={1} fill={`url(#${colorConfig[index].id})`} key={index}
-                                animationDuration={700}/>
+                                animationDuration={700} strokeWidth={3}/>
                     ))
                 }
             </AreaChart>

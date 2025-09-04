@@ -18,6 +18,7 @@ export const createHabitsTable = `CREATE TABLE IF NOT EXISTS habits(
     friday TINYINT(1) NOT NULL,
     saturday TINYINT(1) NOT NULL,
     sunday TINYINT(1) NOT NULL,
+    created_date DATE NOT NULL DEFAULT "2025-06-01",
     FOREIGN KEY (user_id) REFERENCES users(user_id)
     ON UPDATE CASCADE
     ON DELETE CASCADE

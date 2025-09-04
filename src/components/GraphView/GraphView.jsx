@@ -10,10 +10,11 @@ import { useHabitListContext } from "../../providers/HabitListProvider"
 import Dropdown from "../utils/Dropdown/Dropdown";
 import { useStatsContext } from "../../providers/StatsProvider";
 import SWIStackedBarChart from "../utils/Charts/SWIStackedBarChart";
-import { week } from "../../helpers/calendar";
+import { monthList, week, yearList } from "../../helpers/calendar";
 import SWIAreaChart from "../utils/Charts/SWIAreaChart";
 import InfoMessage from "../utils/InfoMessage";
 import { ChartColumnIncreasing } from "lucide-react";
+import dayjs from "dayjs";
 
 export default function GraphView() {
     const {loggedIn} = useAuthContext();
@@ -29,12 +30,87 @@ export default function GraphView() {
     const [stackedChartData, setStackedChartData] = useState([]);
     const [statsRowConfig, setStatsRowConfig] = useState([]);
     const [areaChartData, setAreaChartData] = useState([]);
+    const [timeList, setTimeList] = useState({months: [], years: []})
+    const [interval, setInterval] = useState({
+        year: "all time",
+        month: "all"
+    })
+    const [intervalList, setIntervalList] = useState({
+        years: ["all time"],
+        months: ["all"]
+    })
+    const [trigger, setTrigger] = useState(1);
+    const triggerFetch = () => setTrigger(count => count + 1)
 
     const NotEnoughData = () => (
         <div className="text-xl font-semibold mt-5">
             <InfoMessage IconToShow={ChartColumnIncreasing} message={"Not enough data!"} iconSize={30}/>
         </div>
     )
+
+    const setOptionLists = (startDate) => {
+        const start = dayjs(startDate);
+        const years = yearList(start.format("YYYY"))
+        setIntervalList(prev => ({
+            ...prev,
+            years: [...["all time"], ...years]
+        }))
+    }
+
+    const makeMonthList = (habitId) => {
+        const allMonths = monthList();
+        const habit = allHabits.find(habit => habit.habit_id===habitId)
+        let months = ["all"];
+        const created = {
+            year: dayjs(habit.created_date).format("YYYY"),
+            month: dayjs(habit.created_date).format("MMMM")
+        };
+        let start=0, end;
+        if(interval.year === created.year && interval.year === dayjs().format("YYYY")){
+            start = allMonths.indexOf(created.month)
+            end = allMonths.indexOf(dayjs().format("MMMM"))+1
+        }
+        else if(interval.year === created.year) start = allMonths.indexOf(created.month)
+        else if(interval.year === dayjs().format("YYYY")) end = allMonths.indexOf(dayjs().format("MMMM"))+1
+        
+        months = [
+            ...months,
+            ...allMonths.slice(start,end)
+        ]
+
+        return months
+    }
+
+    useEffect(() => {
+        if(interval.year !== "all time"){
+            // setInterval(prev => ({...prev, month: "all"}))
+            
+            const months = makeMonthList(habitId);
+
+            setIntervalList(prev => ({
+                ...prev,
+                months: months
+            }))
+
+            if(!months.includes(interval.month)){
+                setInterval(prev => ({...prev, month: "all"}))
+        }
+        }
+        else{
+            setIntervalList(prev => ({
+                ...prev,
+                months: ["all"]
+            }))
+            setInterval(prev => ({
+                ...prev,
+                month: 'all'
+            }))
+        }
+    },[interval.year])
+
+    useEffect(() => {
+        if(intervalList.months.includes(interval.month)) console.log(interval)
+    },[interval])
 
     const makeStackedChartData = data => {
         const chartData = 
@@ -48,14 +124,17 @@ export default function GraphView() {
 
     useEffect(() => {
         if(allHabits.length > 0){
-            setHabitId(allHabits[0].habit_id)
+            // setHabitId(allHabits[0].habit_id)
+            setHabitId(allHabits.at(-1).habit_id)
         }
     },[allHabits])
 
     useEffect(() => {
         if(loggedIn && habitId){
             fetchStats();
-            setToShow(habitDisplay());
+            const habit = allHabits.find(habit => habit.habit_id===habitId)
+            setToShow(habitDisplay(habit));
+            setOptionLists(habit.created_date)
         }
         
     },[loggedIn,habitId])
@@ -89,30 +168,69 @@ export default function GraphView() {
         }
     },[stats])
 
-    const habitDisplay = () => { 
-        const habit = allHabits.find(habit => habit.habit_id===habitId)
-        return `${habit.habit_title} ${habit.habit_emoji}` 
-    };
+    const habitDisplay = (habit) => `${habit.habit_title} ${habit.habit_emoji}` 
 
     return (
         <div className="flex flex-col w-full p-1 h-full gap-2">
-            <div className="ml-auto mr-auto w-full z-999">
-                <Dropdown>
-                    <Dropdown.Root toShow={toShow}>
-                        <Dropdown.List>
-                            {
-                                allHabits.map((habit) => {
-                                    return (
-                                        <Dropdown.Item key={habit.habit_id}
-                                                        onclick={()=>setHabitId(habit.habit_id)}>
-                                            {habit.habit_title} {habit.habit_emoji}
-                                        </Dropdown.Item>
-                                    )
-                                })
-                            }
-                        </Dropdown.List>
-                    </Dropdown.Root>
-                </Dropdown>
+            <div className="flex flex-row border z-999">            
+                <div className="ml-auto mr-auto flex-1 border">
+                    <Dropdown>
+                        <Dropdown.Root toShow={toShow}>
+                            <Dropdown.List>
+                                {
+                                    allHabits.map((habit) => {
+                                        return (
+                                            <Dropdown.Item key={habit.habit_id}
+                                                            onclick={()=>setHabitId(habit.habit_id)}>
+                                                {habit.habit_title} {habit.habit_emoji}
+                                            </Dropdown.Item>
+                                        )
+                                    })
+                                }
+                            </Dropdown.List>
+                        </Dropdown.Root>
+                    </Dropdown>
+                </div>
+                <div className="w-7/100 flex border flex-center">
+                    Over
+                </div>
+                <div className="flex w-fit border flex-center flex-row gap-2" style={{width: "35%"}}>
+                    <div className="w-5/10 transition-all duration-300 border">
+                        <Dropdown>
+                            <Dropdown.Root toShow={interval.year}>
+                                <Dropdown.List>
+                                    {
+                                        intervalList.years.map((opt, index) => (
+                                            <Dropdown.Item key={index}
+                                                            onclick={() => setInterval(prev => ({...prev,year:opt}))}>
+                                                {opt}
+                                            </Dropdown.Item>
+                                        ))
+                                    }
+                                </Dropdown.List>
+                            </Dropdown.Root>
+                        </Dropdown>
+                    </div>
+                    {
+                        interval.year!=="all time" && 
+                        <div className="w-5/10 transition-all duration-300 border">
+                            <Dropdown>
+                                <Dropdown.Root toShow={interval.month}>  
+                                    <Dropdown.List>
+                                        {
+                                            intervalList.months.map((opt,index) => (
+                                                <Dropdown.Item key={index}
+                                                                onclick={() => setInterval(prev => ({...prev, month:opt}))}>
+                                                    {opt}
+                                                </Dropdown.Item>
+                                            ))
+                                        }
+                                    </Dropdown.List>
+                                </Dropdown.Root>
+                            </Dropdown>
+                        </div>
+                    }
+                </div>
             </div>
             {/* {isLoading && <Loader></Loader>} */}
             {error && 
@@ -167,7 +285,7 @@ export default function GraphView() {
                                 // "rollingOverAll", 
                                 // "rollingOverExpected"
                             ]}  
-                            yLabel="Completion Rate" 
+                            yLabel="Completion Rate (%)" 
                             xTick={{
                                 fontSize: 10,
                             }}
@@ -176,7 +294,6 @@ export default function GraphView() {
                             <NotEnoughData />
                         }
                     </StatBox>
-                    {/* </div> */}
                 </div>
                 </>
 
