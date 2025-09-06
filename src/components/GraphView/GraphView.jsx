@@ -3,7 +3,7 @@ import ProgressRing from "../utils/ProgressRing";
 import StatBox from "./StatBox";
 import useFetch from "../../hooks/useFetch";
 import { useAuthContext } from "../../providers/AuthProvider";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Loader from "../utils/Loader";
 import Error from "../utils/Error";
 import { useHabitListContext } from "../../providers/HabitListProvider"
@@ -19,99 +19,38 @@ import dayjs from "dayjs";
 export default function GraphView() {
     const {loggedIn} = useAuthContext();
     const {allHabits} = useHabitListContext();
-
     const {habitId, setHabitId} = useStatsContext();
+    const [habit, setHabit] = useState(null);
     const [toShow, setToShow] = useState(null)
-    const {data:stats, isLoading, error, fetchData:fetchStats} = useFetch(
-        `/habit/${habitId}/stats`,
-        {method: 'GET'},
-        false
-    );
     const [stackedChartData, setStackedChartData] = useState([]);
     const [statsRowConfig, setStatsRowConfig] = useState([]);
     const [areaChartData, setAreaChartData] = useState([]);
-    const [timeList, setTimeList] = useState({months: [], years: []})
-    const [interval, setInterval] = useState({
+    const [intervalConfig, setIntervalConfig] = useState({
+        "all time": ["all"],
+    });
+    const [statInterval, setStatInterval] = useState({
         year: "all time",
-        month: "all"
+        month: ""
     })
     const [intervalList, setIntervalList] = useState({
         years: ["all time"],
         months: ["all"]
     })
-    const [trigger, setTrigger] = useState(1);
-    const triggerFetch = () => setTrigger(count => count + 1)
+    const [triggerCount, setTriggerCount] = useState(0);
 
+    const prevInterval = useRef("");
+    const prevHabitId = useRef(0)
+    
+    const {data:stats, isLoading, error, fetchData:fetchStats} = useFetch(
+        `/habit/${habitId}/stats?year=${encodeURIComponent(statInterval.year)}&month=${encodeURIComponent(statInterval.month)}`,
+        {method: 'GET'},
+        false
+    );
     const NotEnoughData = () => (
         <div className="text-xl font-semibold mt-5">
             <InfoMessage IconToShow={ChartColumnIncreasing} message={"Not enough data!"} iconSize={30}/>
         </div>
     )
-
-    const setOptionLists = (startDate) => {
-        const start = dayjs(startDate);
-        const years = yearList(start.format("YYYY"))
-        setIntervalList(prev => ({
-            ...prev,
-            years: [...["all time"], ...years]
-        }))
-    }
-
-    const makeMonthList = (habitId) => {
-        const allMonths = monthList();
-        const habit = allHabits.find(habit => habit.habit_id===habitId)
-        let months = ["all"];
-        const created = {
-            year: dayjs(habit.created_date).format("YYYY"),
-            month: dayjs(habit.created_date).format("MMMM")
-        };
-        let start=0, end;
-        if(interval.year === created.year && interval.year === dayjs().format("YYYY")){
-            start = allMonths.indexOf(created.month)
-            end = allMonths.indexOf(dayjs().format("MMMM"))+1
-        }
-        else if(interval.year === created.year) start = allMonths.indexOf(created.month)
-        else if(interval.year === dayjs().format("YYYY")) end = allMonths.indexOf(dayjs().format("MMMM"))+1
-        
-        months = [
-            ...months,
-            ...allMonths.slice(start,end)
-        ]
-
-        return months
-    }
-
-    useEffect(() => {
-        if(interval.year !== "all time"){
-            // setInterval(prev => ({...prev, month: "all"}))
-            
-            const months = makeMonthList(habitId);
-
-            setIntervalList(prev => ({
-                ...prev,
-                months: months
-            }))
-
-            if(!months.includes(interval.month)){
-                setInterval(prev => ({...prev, month: "all"}))
-        }
-        }
-        else{
-            setIntervalList(prev => ({
-                ...prev,
-                months: ["all"]
-            }))
-            setInterval(prev => ({
-                ...prev,
-                month: 'all'
-            }))
-        }
-    },[interval.year])
-
-    useEffect(() => {
-        if(intervalList.months.includes(interval.month)) console.log(interval)
-    },[interval])
-
     const makeStackedChartData = data => {
         const chartData = 
         week.map((day,index) => ({
@@ -121,6 +60,48 @@ export default function GraphView() {
         }));
         setStackedChartData(chartData);
     }
+    const setOptionLists = (startDate) => {
+        const start = dayjs(startDate);
+        const years = yearList(start.format("YYYY"))
+        const config = {};
+        const allMonths = monthList();
+
+        years.forEach(year => config[year] = makeMonthList(habit.created_date,allMonths,year))
+
+        setIntervalConfig(prev => ({...prev, ...config}));
+        setIntervalList(prev => ({
+            ...prev,
+            years: [...["all time"], ...years]
+        }))
+        setStatInterval({
+            year: "all time",
+            month: "all"
+        });
+    }
+    const makeMonthList = (startDate,allMonths,yearArg) => {
+        let months = ["all"];
+        const created = {
+            year: dayjs(startDate).format("YYYY"),
+            month: dayjs(startDate).format("MMMM")
+        };
+        let start=0, end;
+        if(yearArg === created.year && yearArg === dayjs().format("YYYY")){
+            start = allMonths.indexOf(created.month)
+            end = allMonths.indexOf(dayjs().format("MMMM"))+1
+        }
+        else if(yearArg === created.year) start = allMonths.indexOf(created.month)
+        else if(yearArg === dayjs().format("YYYY")) end = allMonths.indexOf(dayjs().format("MMMM"))+1
+        
+        months = [
+            ...months,
+            ...allMonths.slice(start,end)
+        ]
+
+        return months
+    }
+    const triggerFetch = () => setTriggerCount(count => count + 1)
+    const habitDisplay = (habit) => `${habit.habit_title} ${habit.habit_emoji}` 
+
 
     useEffect(() => {
         if(allHabits.length > 0){
@@ -128,16 +109,20 @@ export default function GraphView() {
             setHabitId(allHabits.at(-1).habit_id)
         }
     },[allHabits])
-
+    
     useEffect(() => {
         if(loggedIn && habitId){
-            fetchStats();
-            const habit = allHabits.find(habit => habit.habit_id===habitId)
-            setToShow(habitDisplay(habit));
-            setOptionLists(habit.created_date)
+            setHabit(allHabits.find(habit => habit.habit_id===habitId))
         }
-        
     },[loggedIn,habitId])
+
+    useEffect(() => {
+        if(habit){
+            setToShow(habitDisplay(habit));
+            setOptionLists(habit.created_date);
+            triggerFetch();
+        }
+    },[habit]);
 
     useEffect(() => {
         if(stats) {
@@ -168,12 +153,35 @@ export default function GraphView() {
         }
     },[stats])
 
-    const habitDisplay = (habit) => `${habit.habit_title} ${habit.habit_emoji}` 
+    useEffect(() => {
+        setIntervalList(prev => ({...prev, months: intervalConfig[statInterval.year]}))
+    },[statInterval.year])
+
+    useEffect(() => {
+        let month = "all"
+        if(intervalList.months.includes(statInterval.month)){
+            month = statInterval.month
+        }
+        setStatInterval(prev => ({...prev, month: month}))
+        if(habitId) triggerFetch();
+    },[intervalList.months])
+
+    useEffect(() => {
+        if(JSON.stringify(statInterval) !== prevInterval.current || 
+            prevHabitId.current !== habitId){
+            prevInterval.current = JSON.stringify(statInterval);
+            prevHabitId.current = habitId;
+            console.log(habitId)
+            if(habitId)
+                fetchStats(); 
+        }
+    },[triggerCount])
+
 
     return (
         <div className="flex flex-col w-full p-1 h-full gap-2">
-            <div className="flex flex-row border z-999">            
-                <div className="ml-auto mr-auto flex-1 border">
+            <div className="flex flex-row z-999">            
+                <div className="ml-auto mr-auto flex-1">
                     <Dropdown>
                         <Dropdown.Root toShow={toShow}>
                             <Dropdown.List>
@@ -191,18 +199,18 @@ export default function GraphView() {
                         </Dropdown.Root>
                     </Dropdown>
                 </div>
-                <div className="w-7/100 flex border flex-center">
+                <div className="w-7/100 flex flex-center">
                     Over
                 </div>
-                <div className="flex w-fit border flex-center flex-row gap-2" style={{width: "35%"}}>
-                    <div className="w-5/10 transition-all duration-300 border">
+                <div className="flex w-fit flex-center flex-row gap-2" style={{width: "35%"}}>
+                    <div className="w-5/10 transition-all duration-300">
                         <Dropdown>
-                            <Dropdown.Root toShow={interval.year}>
+                            <Dropdown.Root toShow={statInterval.year}>
                                 <Dropdown.List>
                                     {
                                         intervalList.years.map((opt, index) => (
                                             <Dropdown.Item key={index}
-                                                            onclick={() => setInterval(prev => ({...prev,year:opt}))}>
+                                                            onclick={() => setStatInterval(prev => ({...prev,year:opt}))}>
                                                 {opt}
                                             </Dropdown.Item>
                                         ))
@@ -212,15 +220,18 @@ export default function GraphView() {
                         </Dropdown>
                     </div>
                     {
-                        interval.year!=="all time" && 
-                        <div className="w-5/10 transition-all duration-300 border">
+                        statInterval.year!=="all time" && 
+                        <div className="w-5/10 transition-all duration-300">
                             <Dropdown>
-                                <Dropdown.Root toShow={interval.month}>  
+                                <Dropdown.Root toShow={statInterval.month}>  
                                     <Dropdown.List>
                                         {
                                             intervalList.months.map((opt,index) => (
                                                 <Dropdown.Item key={index}
-                                                                onclick={() => setInterval(prev => ({...prev, month:opt}))}>
+                                                                onclick={() => {
+                                                                    setStatInterval(prev => ({...prev, month:opt}));
+                                                                    triggerFetch();
+                                                                    }}>
                                                     {opt}
                                                 </Dropdown.Item>
                                             ))

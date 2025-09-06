@@ -197,8 +197,9 @@ const getRollingRate = (exp, com) => {
     const final = [];
     expected.forEach((date,index) => {
         const rc = getCumulative(date);
-        const rroa = getRollingOverAll(date);
-        const rroe = getRollingOverExpected(date,index);
+        // const rroa = getRollingOverAll(date);
+        // const rroe = getRollingOverExpected(date,index);
+        const rroa = []; const rroe = [];
         final.push({
             date,
             cumulative: rc,
