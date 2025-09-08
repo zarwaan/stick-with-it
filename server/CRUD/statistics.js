@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { week } from "../../src/helpers/calendar.js";
+import { monthList, week } from "../../src/helpers/calendar.js";
 import { conn } from "../db/dbConn.js";
 import { fetchUserHabits } from "./habitOperations.js";
 import { title } from "motion/react-client";
@@ -12,7 +12,38 @@ class Response {
     }
 }
 
-const getExpectedDays = async (habitId) => {
+const getTimeInterval = (year,month,habitStart=null) => {
+    let startDate, endDate
+    if(year==="all time"){
+        startDate = dayjs(habitStart || "-1")
+        endDate = dayjs();   
+    }
+    else {
+        if(month==="all"){
+            startDate = dayjs(`${year}-01-01`);
+            endDate = dayjs(`${year}-12-31`)
+        }
+        else{
+            const monthNumber = monthList().indexOf(month) + 1;
+            startDate = dayjs(`${year}-${monthNumber}-01`);
+            endDate = startDate.add(1,'month').subtract(1,'day');
+        }
+    }
+
+    return {startDate, endDate}
+}
+
+const isBetweenCreationAndToday = (createdDate,currentDate) => {
+    const created = dayjs(createdDate);
+    const today = dayjs();
+
+    return (
+        (currentDate.isAfter(created) || currentDate.isSame(created)) && 
+        (currentDate.isBefore(today) || currentDate.isSame(today))
+    )
+}
+
+const getExpectedDays = async (habitId,year,month) => {
     try{
         const [habit] = await conn.query(
             `select * from habits where habit_id = ?`,
@@ -20,15 +51,20 @@ const getExpectedDays = async (habitId) => {
         )
         if(habit.length === 0) return null
 
-        const startDate = dayjs(habit[0]['created_date'] || "2025-08-01") 
-        const dtp = week.filter(day => habit[0][day.toLowerCase()]===1)
+        const createdDate = habit[0]['created_date']
+        const {startDate, endDate} = getTimeInterval(year,month,createdDate);
 
-        const today = dayjs();
+        // const startDate = dayjs(habit[0]['created_date'] || "2025-08-01") 
+        // const endDate = dayjs();
+
+        const dtp = week.filter(day => habit[0][day.toLowerCase()]===1)
         const expected = [];
-        let currentDate = today.clone();
-        while(currentDate.isAfter(startDate) || currentDate.isSame(startDate)){
-            if(dtp.includes(week[(currentDate.day() + 6)%7])){
-                expected.push(currentDate.format("YYYY-MM-DD"))
+        let currentDate = endDate.clone();
+        while((currentDate.isAfter(startDate) || currentDate.isSame(startDate))){
+            if(isBetweenCreationAndToday(createdDate,currentDate)){
+                if(dtp.includes(week[(currentDate.day() + 6)%7])){
+                    expected.push(currentDate.format("YYYY-MM-DD"))
+                }
             }
             currentDate = currentDate.subtract(1,'day')
         }
@@ -40,11 +76,12 @@ const getExpectedDays = async (habitId) => {
     }
 }
 
-const getMissedAndCompletedDays = async (habitId, expected) => {
-    try{   
+const getMissedAndCompletedDays = async (habitId, expected, year, month) => {    
+    try{
+        const {startDate, endDate} = getTimeInterval(year,month);
         const [marked] = await conn.query(
-            `select completed_date from habits_log where habit_id = ?`,
-            [habitId]
+            `select completed_date from habits_log where habit_id = ? and completed_date between ? and ?`,
+            [habitId,startDate.format("YYYY-MM-DD"),endDate.format("YYYY-MM-DD")]
         )
         const missed = expected.filter(
             (date) => 
@@ -211,11 +248,11 @@ const getRollingRate = (exp, com) => {
     return final
 }
 
-export async function getStats(habitId, fields){
+export async function getStats(habitId, fields, year, month){
     try{
-        const expected = await getExpectedDays(habitId);
+        const expected = await getExpectedDays(habitId, year, month);
         if(!expected) return new Response(false, "Habit doesn't exist", null)
-        const {missed, completed} = await getMissedAndCompletedDays(habitId,expected);
+        const {missed, completed} = await getMissedAndCompletedDays(habitId,expected,year,month);
         
         const statConfig = {
             streak:  () => getStreaks(expected,missed),

@@ -3,7 +3,7 @@ import ProgressRing from "../utils/ProgressRing";
 import StatBox from "./StatBox";
 import useFetch from "../../hooks/useFetch";
 import { useAuthContext } from "../../providers/AuthProvider";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, lazy } from "react";
 import Loader from "../utils/Loader";
 import Error from "../utils/Error";
 import { useHabitListContext } from "../../providers/HabitListProvider"
@@ -16,6 +16,9 @@ import InfoMessage from "../utils/InfoMessage";
 import { ChartColumnIncreasing } from "lucide-react";
 import dayjs from "dayjs";
 
+// const SWIStackedBarChart = lazy(() => import('../utils/Charts/SWIStackedBarChart'))
+// const SWIAreaChart = lazy(() => import('../utils/Charts/SWIAreaChart'))
+
 export default function GraphView() {
     const {loggedIn} = useAuthContext();
     const {allHabits} = useHabitListContext();
@@ -23,8 +26,8 @@ export default function GraphView() {
     const [habit, setHabit] = useState(null);
     const [toShow, setToShow] = useState(null)
     const [stackedChartData, setStackedChartData] = useState([]);
-    const [statsRowConfig, setStatsRowConfig] = useState([]);
     const [areaChartData, setAreaChartData] = useState([]);
+    const [statsRowConfig, setStatsRowConfig] = useState([]);
     const [intervalConfig, setIntervalConfig] = useState({
         "all time": ["all"],
     });
@@ -105,8 +108,7 @@ export default function GraphView() {
 
     useEffect(() => {
         if(allHabits.length > 0){
-            // setHabitId(allHabits[0].habit_id)
-            setHabitId(allHabits.at(-1).habit_id)
+            setHabitId(allHabits[0].habit_id)
         }
     },[allHabits])
     
@@ -171,8 +173,8 @@ export default function GraphView() {
             prevHabitId.current !== habitId){
             prevInterval.current = JSON.stringify(statInterval);
             prevHabitId.current = habitId;
-            console.log(habitId)
-            if(habitId)
+            // console.log(habitId)
+            if(habitId) 
                 fetchStats(); 
         }
     },[triggerCount])

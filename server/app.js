@@ -222,7 +222,7 @@ app.post('/fetch-habits',async (req,res) => {
         const response = await fetchUserHabits(userId,day,requireTodayLog)
         if(response.success){
             console.log("\nFound")
-            console.log(response)
+            // console.log(response)
             return res.status(200).json(response)
         }
     }
@@ -377,16 +377,10 @@ app.get('/habit/:id/stats',async (req,res) => {
     try{
         const habitId = req.params.id;
         const fields = req.query.fields?.split(',') || null;
+        const year = req.query.year || "all time";
+        const month = req.query.month || "all";
 
-        // const statConfig = {
-        //     streak: getStreaks
-        // }
-        // const result = {};
-        // await Promise.all(fields.map(async field => {
-        //     if(statConfig[field])
-        //         result[field] = await statConfig[field](habitId)
-        // }))
-        const response = await getStats(habitId, fields)
+        const response = await getStats(habitId, fields, year, month)
         if(response.success){
             return res.status(200).json(response)
         }
