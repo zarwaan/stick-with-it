@@ -11,6 +11,7 @@ import { useAuthContext } from "../providers/AuthProvider";
 import InfoMessage from "./utils/InfoMessage";
 import { UserLock } from "lucide-react";
 import { Link } from "react-router-dom";
+import CalendarProvider from "../providers/CalendarProvider";
 
 export default function ContentView(){
     const {view} = useViewContext();
@@ -39,7 +40,7 @@ export default function ContentView(){
                 loggedIn && 
                 <ContentBox>
                     {view==="habits" && <HabitProvider><HabitsView></HabitsView></HabitProvider>}
-                    {view==="calendar" && <CalendarView></CalendarView>}
+                    {view==="calendar" && <CalendarProvider><CalendarView></CalendarView></CalendarProvider>}
                     {view==="graph" && <StatsProvider><GraphView></GraphView></StatsProvider>}
                     {view==="glance" && <GlanceProvider><GlanceView></GlanceView></GlanceProvider>}
                 </ContentBox>

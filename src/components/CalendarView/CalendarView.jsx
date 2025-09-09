@@ -1,7 +1,11 @@
+import { useCalendarContext } from "../../providers/CalendarProvider"
+import YearView from "./YearView";
+
 export default function CalendarView() {
+    const {view} = useCalendarContext();
     return (
-        <div>
-            Calendar
-        </div>
+        <>
+            {view==="year" && <YearView/>}
+        </>
     )
 }

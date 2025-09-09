@@ -26,7 +26,7 @@ export default function ViewProvider({children}) {
         setPos(3);
     }
 
-    useEffect(() => showGraphView(),[]);
+    useEffect(() => showCalendarView(),[]);
 
     return (
         <ViewContext.Provider value={{

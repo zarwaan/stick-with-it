@@ -45,3 +45,11 @@ export function yearList(from){
     years.push(dayjs().format("YYYY"))
     return years;
 }
+
+export function firstDayOfMonth(month,year){
+    return dayjs(`${year}-${month}-01`).day();
+}
+
+export function daysInMonth(month, year){
+    return dayjs(`${year}-${month}-01`).daysInMonth();
+}
