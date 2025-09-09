@@ -104,6 +104,7 @@ export default function GraphView() {
     }
     const triggerFetch = () => setTriggerCount(count => count + 1)
     const habitDisplay = (habit) => `${habit.habit_title} ${habit.habit_emoji}` 
+    const isSecondOpen = () => statInterval.year === "all time"
 
 
     useEffect(() => {
@@ -202,10 +203,15 @@ export default function GraphView() {
                     </Dropdown>
                 </div>
                 <div className="w-7/100 flex flex-center">
-                    Over
+                    over
                 </div>
-                <div className="flex w-fit flex-center flex-row gap-2" style={{width: "35%"}}>
-                    <div className="w-5/10 transition-all duration-300">
+                <div className="flex flex-center flex-row gap-2" style={{
+                    width: isSecondOpen() ? "20%" : "35%"
+                }}>
+                    <div className=""
+                            style={{
+                                width: isSecondOpen() ? "100%" : "50%"
+                            }}>
                         <Dropdown>
                             <Dropdown.Root toShow={statInterval.year}>
                                 <Dropdown.List>

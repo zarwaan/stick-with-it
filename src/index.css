@@ -69,7 +69,6 @@
 
 .custom-scroll {
   overflow-y: auto;
-  scrollbar-gutter: stable;
 }
 /* .border{
   border: none !important;

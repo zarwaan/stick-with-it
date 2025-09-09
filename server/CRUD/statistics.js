@@ -157,7 +157,7 @@ const getRollingRate = (exp, com) => {
     const expected = [...exp].reverse();
     const completed = [...com].reverse();
 
-    if(expected.length < 6) return [];
+    // if(expected.length < 6) return [];
     const windowLength = expected.length > 14 ? 7 : 3;
 
     const cumulativeRate = [], rollingRateOverAll = [], rollingRateOverExpected = [];
