@@ -28,7 +28,7 @@ export default function SWIStackedBarChart({dataArg, xVal="x", y1Val="y1", y2Val
             }}>
                 <CartesianGrid strokeDasharray={"1 1"}/>
                 <XAxis dataKey={xVal} interval={0} tick={xTick}/>
-                <YAxis label={{value: yLabel, angle: -90, dx: -10}}/>
+                <YAxis label={{value: yLabel, angle: -90, dx: -20}}/>
                 {tooltip && <Tooltip contentStyle={{borderRadius: "15px",backgroundColor: "#ffffffee"}}/>}
                 <Legend />
                 <Bar dataKey={y1Val} stackId={"id"} fill="#084600ff" animationDuration={700}/>

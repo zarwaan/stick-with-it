@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { daysInMonth, firstDayOfMonth, monthList } from "../../helpers/calendar";
+import { daysInMonth, firstDayOfMonth, getDaysOfMonthWithNulls, monthList } from "../../helpers/calendar";
 import { useCalendarContext } from "../../providers/CalendarProvider";
 import { motion } from "motion/react";
 import dayjs from "dayjs";
@@ -17,14 +17,8 @@ const Date = ({date, month, year}) => {
 
 function Month({monthName,year,monthNumber, onclick}) {
     const { setMonthView } = useCalendarContext();
-    const daysToLeave = firstDayOfMonth(monthNumber,year);
-    const numberOfDays = daysInMonth(monthNumber, year);
+    const finalDaysToShow = getDaysOfMonthWithNulls(monthNumber,year)
 
-    const nullArrayBegin = Array.from({length: daysToLeave}).fill(null);
-    const daysWithoutNull = Array.from({length: numberOfDays},(_,i) => i+1)
-    const nullArrayEnd = Array.from({length: 42 - daysToLeave - numberOfDays}).fill(null)
-    
-    const finalDaysToShow = [...nullArrayBegin, ...daysWithoutNull, ...nullArrayEnd]
     return (
         <motion.button className={`border rounded-2xl flex flex-col p-2 cursor-pointer gap-[5px]
                         border-3 border-green-900 bg-green-100 text-green-900`}
@@ -46,12 +40,12 @@ function Month({monthName,year,monthNumber, onclick}) {
 
 const TodayButton = ({setYear}) => {
     return (
-        <button className="bg-green-800 text-green-50 font-normal text-lg flex flex-row gap-1 p-1 flex-center
-        pl-3 pr-3 rounded-xl absolute top-0 border border-black right-3 top-[50%] -translate-y-[50%] cursor-pointer
+        <button className="bg-green-800 text-green-50 font-normal text-base flex flex-row gap-1 p-1 flex-center
+        pl-3 pr-3 rounded-xl absolute top-0 border border- right-3 top-[50%] -translate-y-[50%] cursor-pointer
         hover:bg-green-700 transition-all duration-300"
         onClick={() => setYear(dayjs().year())}>
             <div className="h-fit">
-                <Calendar1 strokeWidth={1.5} size={20}/>
+                <Calendar1 strokeWidth={1.5} size={18}/>
             </div>
             <div className="">
                 Today

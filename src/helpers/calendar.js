@@ -4,6 +4,10 @@ export const week = [
     'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'
 ]
 
+export const weekFromSunday = [
+    'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
+]
+
 export const weekAbbr = week.map((day) => day.slice(0,3))
 
 export const weekSingleLetter = week.map((day) => day.slice(0,1))
@@ -52,4 +56,15 @@ export function firstDayOfMonth(month,year){
 
 export function daysInMonth(month, year){
     return dayjs(`${year}-${month}-01`).daysInMonth();
+}
+
+export function getDaysOfMonthWithNulls(month, year){
+    const daysToLeave = firstDayOfMonth(month,year);
+    const numberOfDays = daysInMonth(month, year);
+
+    const nullArrayBegin = Array.from({length: daysToLeave}).fill(null);
+    const daysWithoutNull = Array.from({length: numberOfDays},(_,i) => i+1)
+    const nullArrayEnd = Array.from({length: 42 - daysToLeave - numberOfDays}).fill(null)
+    
+    return [...nullArrayBegin, ...daysWithoutNull, ...nullArrayEnd]
 }
