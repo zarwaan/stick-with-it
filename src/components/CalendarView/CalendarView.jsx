@@ -2,6 +2,7 @@ import { useCalendarContext } from "../../providers/CalendarProvider"
 import YearView from "./YearView";
 import MonthView from "./MonthView"
 import Fade from "../utils/Fade";
+import DateView from "./DateView";
 
 export default function CalendarView() {
     const {view} = useCalendarContext();
@@ -22,6 +23,12 @@ export default function CalendarView() {
             isMonthView() && 
             <Fade>
                 <MonthView/>
+            </Fade>
+        }
+        {
+            isDateView() && 
+            <Fade>
+                <DateView/>
             </Fade>
         }
         </>

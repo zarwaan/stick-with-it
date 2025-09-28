@@ -7,15 +7,16 @@ import { useHabitListContext } from "../../providers/HabitListProvider";
 import { Undo2 } from "lucide-react";
 import { useCallback } from "react";
 
-const Date = ({date, month, year, dayWiseHabits}) => {
+const Date = ({date, month, year, dayWiseHabits, setDateView}) => {
     if(!date) return ( <div></div> )
     const isToday = () => 
         date === dayjs().date() && month === dayjs().month()+1 && year === dayjs().year()
     const habits = 
     dayWiseHabits[weekFromSunday[dayjs(year+'-'+month+'-'+date).day()]]
         return (
-            <div className={`text-lg border-2 rounded-xl bg-green-100 text-green-900 font-semibold flex flex-col max-h-full
-                ${isToday() ? "bg-red-100 text-red-900 rounded-full" : ""}`}>
+            <div className={`text-lg border-2 rounded-xl bg-green-100 text-green-900 font-semibold flex flex-col max-h-full cursor-pointer
+                ${isToday() ? "bg-red-100 text-red-900 rounded-full" : ""}`}
+                onClick={()=>setDateView(date)}>
                     <div className="">
                         {date}
                     </div>
@@ -72,7 +73,7 @@ const BackButton = ({year}) => {
 }
 
 export default function MonthView() {
-    const {month, year, setMonth, setYear} = useCalendarContext();
+    const {month, year, setMonth, setYear, setDateView} = useCalendarContext();
     const {allHabits} = useHabitListContext();
     const dayWiseHabits = {}
     week.forEach(d => dayWiseHabits[d] = [])
@@ -125,7 +126,7 @@ export default function MonthView() {
                  w-full flex flex-1 h-full gap-2 `}>
                     {
                         finalDaysToShow.map((d,i) => 
-                            <Date date={d} key={i} month={month} year={year} dayWiseHabits={dayWiseHabits}/>
+                            <Date date={d} key={i} month={month} year={year} dayWiseHabits={dayWiseHabits} setDateView={setDateView}/>
                         )
                     }
                 </motion.div>
