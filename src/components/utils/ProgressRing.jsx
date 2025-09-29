@@ -1,7 +1,7 @@
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 
-export default function ProgressRing({progress, stroke=10}) {
+export default function ProgressRing({progress, stroke=10, toShow=[]}) {
     const [progressVal, setProgressVal] = useState(progress);
     useEffect(() => {
         setProgressVal(progress)
@@ -48,7 +48,13 @@ export default function ProgressRing({progress, stroke=10}) {
                     fill="#000000"
                     fontWeight={700}
             >
-                <tspan x={"50%"} dy={"0"}>{progressVal}%</tspan>
+                <tspan x={"50%"} dy={"0"}>
+                    {
+                        toShow.length > 0 ? 
+                        `${toShow[0]}/${toShow[1]}` :
+                        `${progressVal}%`
+                    }
+                </tspan>
             </text>
         </svg>
     )
