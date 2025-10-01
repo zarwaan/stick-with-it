@@ -70,3 +70,17 @@ export async function getHabitLogs(habitId){
         throw err
     }
 }
+
+export async function getHabitsLoggedOnDay(date, month, year, userId){
+    const formattedDate = dayjs(`${year}-${month}-${date}`).format("YYYY-MM-DD"); 
+    try{
+        const [res] = await conn.query(
+            "select habit_id from habits_log where user_id = ? and completed_date = ?",
+            [userId, formattedDate]
+        );
+        return new Response(true, "Found successfully", res)
+    }
+    catch(err){
+        throw err
+    }
+}

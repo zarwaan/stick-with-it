@@ -19,7 +19,7 @@ import dayjs from "dayjs";
 // const SWIStackedBarChart = lazy(() => import('../utils/Charts/SWIStackedBarChart'))
 // const SWIAreaChart = lazy(() => import('../utils/Charts/SWIAreaChart'))
 
-export default function GraphView() {
+export default function GraphView() { 
     const {loggedIn} = useAuthContext();
     const {allHabits} = useHabitListContext();
     const {habitId, setHabitId} = useStatsContext();

@@ -9,10 +9,10 @@ import { useCallback } from "react";
 
 const Date = ({date, month, year, dayWiseHabits, setDateView}) => {
     if(!date) return ( <div></div> )
+    const thisDay = dayjs(`${year}-${month}-${date}`);
     const isToday = () => 
         date === dayjs().date() && month === dayjs().month()+1 && year === dayjs().year()
-    const habits = 
-    dayWiseHabits[weekFromSunday[dayjs(year+'-'+month+'-'+date).day()]]
+    const habits = dayWiseHabits[weekFromSunday[dayjs(year+'-'+month+'-'+date).day()]]
         return (
             <div className={`text-lg border-2 rounded-xl bg-green-100 text-green-900 font-semibold flex flex-col max-h-full cursor-pointer
                 ${isToday() ? "bg-red-100 text-red-900 rounded-full" : ""}`}
@@ -26,7 +26,10 @@ const Date = ({date, month, year, dayWiseHabits, setDateView}) => {
                             habits.map((h,i) => {
                                 return (
                                     <span className="" key={i}>
-                                        {h}
+                                        {
+                                            (dayjs(h.created_date).isBefore(thisDay) || dayjs(h.created_date).isSame(thisDay))
+                                            && h.habit_emoji
+                                        }
                                     </span>
                                 )
                             })
@@ -80,7 +83,7 @@ export default function MonthView() {
     allHabits.forEach(habit => {
         week.forEach((d,i) => {
             if(habit[d.toLowerCase()] === 1)
-                dayWiseHabits[d].push(habit.habit_emoji)
+                dayWiseHabits[d].push(habit)
         })
     })
     // console.log(dayWiseHabits);

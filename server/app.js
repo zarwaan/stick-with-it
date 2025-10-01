@@ -5,7 +5,7 @@ import session from 'express-session';
 import { deleteUser, getUserDetails, login, register, updateUserDetails } from './CRUD/userOperations.js';
 import bcrypt from 'bcrypt';
 import { AuthError, createNewHabit, deleteHabit, fetchHabit, fetchUserHabits, updateHabit } from './CRUD/habitOperations.js';
-import { checkIfLogged, getHabitLogs, logHabit } from './CRUD/habitlogOperations.js';
+import { checkIfLogged, getHabitLogs, getHabitsLoggedOnDay, logHabit } from './CRUD/habitlogOperations.js';
 import { getStats } from './CRUD/statistics.js';
 
 const app = express();
@@ -387,6 +387,22 @@ app.get('/habit/:id/stats',async (req,res) => {
         else{
             return res.status(404).json(response)
         }
+    }
+    catch(err){
+        returnError(err,res)
+    }
+})
+
+app.get('/user/logs',async (req, res) => {
+    try {
+        const {userId} = req.session.user
+        // const userId = 8 //only for testing
+        const date = req.query.date || null;
+        const month = req.query.month || null;
+        const year = req.query.year || null;
+        
+        const response = await getHabitsLoggedOnDay(date, month, year, userId)
+        return res.status(200).json(response)
     }
     catch(err){
         returnError(err,res)
