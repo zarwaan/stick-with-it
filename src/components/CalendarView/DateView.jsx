@@ -9,6 +9,7 @@ import useFetch from "../../hooks/useFetch";
 import { useEffect, useState } from "react";
 import Loader from "../utils/Loader";
 import { motion } from "motion/react";
+import TodayButton from "./TodayButton";
 
 const isTodayBeforeOrAfter = (date, month, year) => {
     const thisDate = dayjs(`${year}-${month}-${date}`);
@@ -170,7 +171,8 @@ export default function DateView() {
     },[comp])
     return (
         <div className="h-full flex flex-col gap-1">
-            <div className="text-3xl text-green-900 font-bold">
+            <div className="text-3xl text-green-900 font-bold relative">
+                <TodayButton onclick={() => {setYear(dayjs().year()); setMonth(dayjs().month() + 1); setDate(dayjs().date())}} />
                 <BackButton month={month}/>
                 <div className="w-6/10 flex flex-row justify-between m-auto">
                     <LeftRightButton op={-1} />

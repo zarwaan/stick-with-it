@@ -5,6 +5,7 @@ import { motion } from "motion/react";
 import dayjs from "dayjs";
 import { Calendar1 } from "lucide-react";
 import Fade from "../utils/Fade";
+import TodayButton from "./TodayButton";
 
 const Date = ({date, month, year}) => {
     const isToday = () => date === dayjs().date() && month === dayjs().month()+1 && year === dayjs().year()
@@ -35,22 +36,6 @@ function Month({monthName,year,monthNumber, onclick}) {
                 }
             </div>
         </motion.button>
-    )
-}
-
-const TodayButton = ({setYear}) => {
-    return (
-        <button className="bg-green-800 text-green-50 font-normal text-base flex flex-row gap-1 p-1 flex-center
-        pl-3 pr-3 rounded-xl absolute top-0 border border- right-3 top-[50%] -translate-y-[50%] cursor-pointer
-        hover:bg-green-700 transition-all duration-300"
-        onClick={() => setYear(dayjs().year())}>
-            <div className="h-fit">
-                <Calendar1 strokeWidth={1.5} size={18}/>
-            </div>
-            <div className="">
-                Today
-            </div>
-        </button>
     )
 }
 
@@ -94,7 +79,7 @@ export default function YearView() {
         <motion.div className="h-full flex flex-col transition-all duration-1000" ref={yearRef}
                     >
             <div className="text-3xl font-black text-green-900 relative">
-                <TodayButton setYear={setYear}/>
+                <TodayButton onclick={() => setYear(dayjs().year())} />
                 <div className="w-5/10 flex flex-row justify-between m-auto">
                     <LeftRightButton op={-1} />
                     <div className="">{year}</div>

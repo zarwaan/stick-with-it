@@ -6,6 +6,7 @@ import dayjs from "dayjs";
 import { useHabitListContext } from "../../providers/HabitListProvider";
 import { Undo2 } from "lucide-react";
 import { useCallback } from "react";
+import TodayButton from "./TodayButton";
 
 const Date = ({date, month, year, dayWiseHabits, setDateView}) => {
     if(!date) return ( <div></div> )
@@ -116,6 +117,7 @@ export default function MonthView() {
     return (
         <motion.div className="h-[97%] flex flex-col gap-4">
             <div className="text-4xl font-bold text-green-900 relative">
+                <TodayButton onclick={() => {setYear(dayjs().year()); setMonth(dayjs().month() + 1)}} />
                 <BackButton year={year}/>
                 <div className="w-5/10 flex flex-row justify-between m-auto">
                     <LeftRightButton op={-1} />
