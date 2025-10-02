@@ -62,8 +62,8 @@ Ensure the following are installed on your system:
     ```
 5. Initialise the database by running these commands
     ```sh
-    node db/createDb.js
-    node db/createTables.js
+    node server/db/createDb.js
+    node server/db/createTables.js
     ```
 6. Start the server
     - Frontend:
