@@ -30,14 +30,14 @@ export default function NavBar() {
                         console.log("Calendar")
                     }
         },
-        atAGlance: {
-            name: "At a glance",
-            number: 3,
-            onclick: () => {
-                        showGlanceView();
-                        console.log("At a glance")
-                    }
-        }
+        // atAGlance: {
+        //     name: "At a glance",
+        //     number: 3,
+        //     onclick: () => {
+        //                 showGlanceView();
+        //                 console.log("At a glance")
+        //             }
+        // }
     }
 
     return (
