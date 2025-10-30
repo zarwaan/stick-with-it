@@ -25,13 +25,13 @@ export default function Habit({habit}) {
     const deleteRequest = async () => {
         if(confirm(`Are you sure you want to delete "${habit['habit_title']}"?`)) {
             try{
-                const response = await fetch(`${import.meta.env.VITE_API_URL_ROOT}/delete-habit`,{
-                    method: 'POST',
+                const response = await fetch(`${import.meta.env.VITE_API_URL_ROOT}/habits/${habit['habit_id']}`,{
+                    method: 'DELETE',
                     headers: {
                             "Content-Type": "application/json"
                         },
                     credentials: 'include',
-                    body: JSON.stringify({habitId : habit['habit_id']})
+                    // body: JSON.stringify({habitId : habit['habit_id']})
                 })
                 const result = await response.json();
                 if(response.ok){

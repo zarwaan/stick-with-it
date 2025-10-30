@@ -46,7 +46,7 @@ export default function NewHabit() {
 
     const submitNewHabit = async (mergedData) => {
         try{
-            const response = await fetch(`${import.meta.env.VITE_API_URL_ROOT}/new-habit`,{
+            const response = await fetch(`${import.meta.env.VITE_API_URL_ROOT}/habits`,{
                 method: 'POST',
                 credentials: 'include',
                 headers: {

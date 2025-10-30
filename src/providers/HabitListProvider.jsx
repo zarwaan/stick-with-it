@@ -17,9 +17,9 @@ export default function HabitListProvider({children}) {
             isLoading: habitsLoading, 
             error: habitsError, 
             fetchData: fetchHabits
-        } = useFetch(`/fetch-habits?requireTodayLog=1`,
+        } = useFetch(`/habits?requireTodayLog=1`,
                         {
-                            method: 'POST',
+                            method: 'GET',
                             credentials: 'include',
                         },
                         false

@@ -7,6 +7,7 @@ import bcrypt from 'bcrypt';
 import { AuthError, createNewHabit, deleteHabit, fetchHabit, fetchUserHabits, updateHabit } from './CRUD/habitOperations.js';
 import { checkIfLogged, getHabitLogs, getHabitsLoggedOnDay, logHabit } from './CRUD/habitlogOperations.js';
 import { getStats } from './CRUD/statistics.js';
+import habitRouter from './routes/habitRouter.js';
 
 const app = express();
 app.use(express.json());
@@ -182,127 +183,139 @@ app.post('/update-details',async (req,res) => {
     }
 })
 
-app.post('/new-habit',async (req,res) => {
-    try{
-        // normal:
-        const {userId} = req.session.user;
+/////// habits ///////
+
+app.use('/habits', habitRouter)
+
+// app.post('/new-habit',async (req,res) => {
+//     try{
+//         // normal:
+//         const {userId} = req.session.user;
         
-        // postman
-        // const {userId} = req.body;
+//         // postman
+//         // const {userId} = req.body;
 
-        const {title, emoji, dayArray} = req.body;
+//         const {title, emoji, dayArray} = req.body;
 
-        const response = await createNewHabit(userId,title,emoji,dayArray)
-        if(response.success){
-            console.log("\nInserted new habit for user "+userId)
-            console.log(response)
-            return res.status(200).json(response)
-        }
-        else{
-            return res.status(500).json(response)
-        }
-    }
-    catch(err){
-        console.log("\nError inserting!")
-        console.log(err)
-        return res.status(500).json(err)
-    }
-})
+//         const response = await createNewHabit(userId,title,emoji,dayArray)
+//         if(response.success){
+//             console.log("\nInserted new habit for user "+userId)
+//             console.log(response)
+//             return res.status(200).json(response)
+//         }
+//         else{
+//             return res.status(500).json(response)
+//         }
+//     }
+//     catch(err){
+//         console.log("\nError inserting!")
+//         console.log(err)
+//         return res.status(500).json(err)
+//     }
+// })
 
-app.post('/fetch-habits',async (req,res) => {
-    try{
-        // normal:
-        const {userId} = req.session.user;
+////
+
+// app.post('/fetch-habits',async (req,res) => {
+//     try{
+//         // normal:
+//         const {userId} = req.session.user;
         
-        // postman
-        // const {userId} = req.body;
-        const requireTodayLog = (req.query.requireTodayLog && req.query.requireTodayLog>0) || false
-        const day = req.body.day || null;
+//         // postman
+//         // const {userId} = req.body;
+//         const requireTodayLog = (req.query.requireTodayLog && req.query.requireTodayLog>0) || false
+//         const day = req.body.day || null;
 
-        const response = await fetchUserHabits(userId,day,requireTodayLog)
-        if(response.success){
-            console.log("\nFound")
-            // console.log(response)
-            return res.status(200).json(response)
-        }
-    }
-    catch(err){
-        console.log("\nError finding!")
-        console.log(err)
-        return res.status(500).json(err)
-    }
-}) 
+//         const response = await fetchUserHabits(userId,day,requireTodayLog)
+//         if(response.success){
+//             console.log("\nFound")
+//             // console.log(response)
+//             return res.status(200).json(response)
+//         }
+//     }
+//     catch(err){
+//         console.log("\nError finding!")
+//         console.log(err)
+//         return res.status(500).json(err)
+//     }
+// }) 
 
-app.post('/get-habit',async (req,res) => {
-    try{
-        const {habitId} = req.body;
+///
 
-        const response = await fetchHabit(habitId)
-        if(response.success){
-            console.log("\nFound")
-            console.log(response)
-            return res.status(200).json(response)
-        }
-        else{
-            console.log("\nNot found")
-            return res.status(404).json(response)
-        }
-    }
-    catch(err){
-        console.log("\nError finding!")
-        console.log(err)
-        return res.status(500).json(err)
-    }
-})
+// app.post('/get-habit',async (req,res) => {
+//     try{
+//         const {habitId} = req.body;
 
-app.post('/delete-habit',async (req,res) => {
-    try{
-        const {userId} = req.session.user || -1;
-        const {habitId} = req.body;
+//         const response = await fetchHabit(habitId)
+//         if(response.success){
+//             console.log("\nFound")
+//             console.log(response)
+//             return res.status(200).json(response)
+//         }
+//         else{
+//             console.log("\nNot found")
+//             return res.status(404).json(response)
+//         }
+//     }
+//     catch(err){
+//         console.log("\nError finding!")
+//         console.log(err)
+//         return res.status(500).json(err)
+//     }
+// })
 
-        const response = await deleteHabit(userId, habitId)
-        if(response.success){
-            console.log("\nDeleted")
-            console.log(response)
-            return res.status(200).json(response)
-        }
-        else{
-            console.log("\nError deleting")
-            return res.status(500).json(response)
-        }
-    }
-    catch(err){
-        if(err.code === 401) return res.status(401).json(err)
-        console.log("\nError deleting!")
-        console.log(err)
-        return res.status(500).json(err)
-    }
-})
 
-app.post('/update-habit', async (req,res) => {
-    try{
-        const {userId} = req.session.user || -1;
-        const {habitId, title, emoji, dayArray} = req.body;
-        const response = await updateHabit(userId,habitId,title,emoji,dayArray);
 
-        if(response.success){
-            console.log("\nUpdated")
-            console.log(response)
-            return res.status(200).json(response)
-        }
-        else{
-            console.log("\Not found")
-            console.log(response)
-            return res.status(404).json(response)
-        }
-    }
-    catch(err){
-        if(err.code === 401) return res.status(401).json(err)
-        console.log('\nError Updating')
-        console.log(err)
-        return res.status(500).json(err)
-    }
-})
+////
+
+// app.post('/delete-habit',async (req,res) => {
+//     try{
+//         const {userId} = req.session.user || -1;
+//         const {habitId} = req.body;
+
+//         const response = await deleteHabit(userId, habitId)
+//         if(response.success){
+//             console.log("\nDeleted")
+//             console.log(response)
+//             return res.status(200).json(response)
+//         }
+//         else{
+//             console.log("\nError deleting")
+//             return res.status(500).json(response)
+//         }
+//     }
+//     catch(err){
+//         if(err.code === 401) return res.status(401).json(err)
+//         console.log("\nError deleting!")
+//         console.log(err)
+//         return res.status(500).json(err)
+//     }
+// })
+
+// app.post('/update-habit', async (req,res) => {
+//     try{
+//         const {userId} = req.session.user || -1;
+//         const {habitId, title, emoji, dayArray} = req.body;
+//         const response = await updateHabit(userId,habitId,title,emoji,dayArray);
+
+//         if(response.success){
+//             console.log("\nUpdated")
+//             console.log(response)
+//             return res.status(200).json(response)
+//         }
+//         else{
+//             console.log("\Not found")
+//             console.log(response)
+//             return res.status(404).json(response)
+//         }
+//     }
+//     catch(err){
+//         if(err.code === 401) return res.status(401).json(err)
+//         console.log('\nError Updating')
+//         console.log(err)
+//         return res.status(500).json(err)
+//     }
+// })
 
 function returnError(err,res){
     console.log(err);

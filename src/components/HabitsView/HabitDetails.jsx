@@ -41,14 +41,13 @@ export default function HabitDetails() {
         }
 
         try{
-            const response = await fetch(`${import.meta.env.VITE_API_URL_ROOT}/update-habit`,{
-                method: "POST",
+            const response = await fetch(`${import.meta.env.VITE_API_URL_ROOT}/habits/${currentHabitView['habit_id']}`,{
+                method: "PATCH",
                 headers: {
                     "Content-Type": "application/json"
                 },
                 credentials: 'include',
                 body: JSON.stringify({
-                    habitId: currentHabitView['habit_id'],
                     ...habitData,
                     dayArray: days
                 })
