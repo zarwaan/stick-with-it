@@ -45,7 +45,7 @@ export default function GraphView() {
     const prevHabitId = useRef(0)
     
     const {data:stats, isLoading, error, fetchData:fetchStats} = useFetch(
-        `/habit/${habitId}/stats?year=${encodeURIComponent(statInterval.year)}&month=${encodeURIComponent(statInterval.month)}`,
+        `/habits/${habitId}/stats?year=${encodeURIComponent(statInterval.year)}&month=${encodeURIComponent(statInterval.month)}`,
         {method: 'GET'},
         false
     );

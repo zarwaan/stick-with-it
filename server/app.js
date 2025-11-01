@@ -324,7 +324,7 @@ app.use('/habits', habitRouter)
 //     }
 // })
 
-function returnError(err,res){
+export function returnError(err,res){
     console.log(err);
     if(err instanceof AuthError)
         return res.status(401).json(err)
@@ -393,25 +393,25 @@ class Response {
     }
 }
 
-app.get('/habit/:id/stats',async (req,res) => {
-    try{
-        const habitId = req.params.id;
-        const fields = req.query.fields?.split(',') || null;
-        const year = req.query.year || "all time";
-        const month = req.query.month || "all";
+// app.get('/habit/:id/stats',async (req,res) => {
+//     try{
+//         const habitId = req.params.id;
+//         const fields = req.query.fields?.split(',') || null;
+//         const year = req.query.year || "all time";
+//         const month = req.query.month || "all";
 
-        const response = await getStats(habitId, fields, year, month)
-        if(response.success){
-            return res.status(200).json(response)
-        }
-        else{
-            return res.status(404).json(response)
-        }
-    }
-    catch(err){
-        returnError(err,res)
-    }
-})
+//         const response = await getStats(habitId, fields, year, month)
+//         if(response.success){
+//             return res.status(200).json(response)
+//         }
+//         else{
+//             return res.status(404).json(response)
+//         }
+//     }
+//     catch(err){
+//         returnError(err,res)
+//     }
+// })
 
 app.get('/user/logs',async (req, res) => {
     try {

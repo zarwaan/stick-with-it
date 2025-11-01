@@ -1,5 +1,7 @@
 import express from 'express'
 import { createNewHabit, deleteHabit, fetchHabit, fetchUserHabits, updateHabit } from '../CRUD/habitOperations.js';
+import { returnError } from '../app.js';
+import { getStats } from '../CRUD/statistics.js';
 
 const habitRouter = express.Router();
 
@@ -105,7 +107,7 @@ habitRouter.patch('/:id', async (req, res) => {
         const habitId = req.params.id;
         const {userId} = req.session.user || -1;
         const {title, emoji, dayArray} = req.body;
-        
+
         const response = await updateHabit(userId,habitId,title,emoji,dayArray);
 
         if(response.success){
@@ -124,6 +126,26 @@ habitRouter.patch('/:id', async (req, res) => {
         console.log('\nError Updating')
         console.log(err)
         return res.status(500).json(err)
+    }
+})
+
+habitRouter.get('/:id/stats', async (req, res) => {
+    try{
+        const habitId = req.params.id;
+        const fields = req.query.fields?.split(',') || null;
+        const year = req.query.year || "all time";
+        const month = req.query.month || "all";
+
+        const response = await getStats(habitId, fields, year, month)
+        if(response.success){
+            return res.status(200).json(response)
+        }
+        else{
+            return res.status(404).json(response)
+        }
+    }
+    catch(err){
+        returnError(err,res)
     }
 })
 
