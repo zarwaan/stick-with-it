@@ -20,8 +20,8 @@ export default function AuthProvider({children}) {
     useEffect(() => {
         const checkSession = async () => {
             try{
-                const response = await fetch(`${import.meta.env.VITE_API_URL_ROOT}/session-details`,{
-                    method: 'POST',
+                const response = await fetch(`${import.meta.env.VITE_API_URL_ROOT}/users/user/session`,{
+                    method: 'GET',
                     headers: {
                             "Content-Type": "application/json"
                         },

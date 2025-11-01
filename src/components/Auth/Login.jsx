@@ -27,8 +27,8 @@ export default function Login() {
             setErrorMessage("Please fill all required fields!");
         }
         else{
-            const url = `${import.meta.env.VITE_API_URL_ROOT}/login`
-            console.log(`Make request to ${import.meta.env.VITE_API_URL_ROOT}/login`);
+            const url = `${import.meta.env.VITE_API_URL_ROOT}/users/login`
+            console.log(`Make request to ${import.meta.env.VITE_API_URL_ROOT}/users/login`);
             // console.log(creds);
             try{
                 const response = await fetch(url,{

@@ -20,8 +20,8 @@ export default function Profile() {
 
     const fetchUserDetails = async () => {
         try{
-            const response = await fetch(`${urlRoot}/user-details`,{
-                method: 'POST',
+            const response = await fetch(`${urlRoot}/users/user`,{
+                method: 'GET',
                 headers: {
                         "Content-Type": "application/json"
                     },
@@ -42,7 +42,7 @@ export default function Profile() {
     }
 
     const logoutRequest = async () => {
-        const url = `${urlRoot}/logout`
+        const url = `${urlRoot}/users/logout`
         try{
             const response = await fetch(url,{
                 method: 'POST',
@@ -73,8 +73,8 @@ export default function Profile() {
         if(confirm("Are you sure you want to delete your account?"))
         {
             try{
-                const response = await fetch(`${urlRoot}/delete-user`,{
-                    method: 'POST',
+                const response = await fetch(`${urlRoot}/users/user`,{
+                    method: 'DELETE',
                     headers: {
                         "Content-Type": "application/json"
                     },

@@ -31,8 +31,8 @@ export default function UpdateDetailsButton({editMode, setEditMode, userData, se
 
     const updateRequest = async () => {
         try{
-            const response = await fetch(`${import.meta.env.VITE_API_URL_ROOT}/update-details`,{
-                method: 'POST',
+            const response = await fetch(`${import.meta.env.VITE_API_URL_ROOT}/users/user`,{
+                method: 'PATCH',
                 headers: {
                         "Content-Type": "application/json"
                     },

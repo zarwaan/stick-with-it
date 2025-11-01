@@ -45,7 +45,7 @@ export default function Register() {
             setErrorMessage(message)
         }
         else{
-            const url = `${import.meta.env.VITE_API_URL_ROOT}/register`;
+            const url = `${import.meta.env.VITE_API_URL_ROOT}/users/`;
             try{
                 const response = await fetch(url,{
                     method: "POST",

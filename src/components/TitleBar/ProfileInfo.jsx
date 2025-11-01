@@ -4,7 +4,7 @@ export default function ProfileInfo({username, firstName, lastName}){
     const {logout} = useAuthContext();
 
     const logoutRequest = async () => {
-        const url = `${import.meta.env.VITE_API_URL_ROOT}/logout`
+        const url = `${import.meta.env.VITE_API_URL_ROOT}/users/logout`
         try{
             const response = await fetch(url,{
                 method: 'POST',
