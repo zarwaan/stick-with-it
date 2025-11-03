@@ -1,5 +1,5 @@
 import express from 'express'
-import { returnError } from '../app.js';
+import { returnError } from '../utils/utils.js';
 import { getHabitLogs, getHabitsLoggedOnDay, logHabit } from '../CRUD/habitlogOperations.js';
 
 const logsRouter = express.Router();

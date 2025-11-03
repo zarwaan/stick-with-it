@@ -1,6 +1,6 @@
 import express from 'express'
 import { createNewHabit, deleteHabit, fetchHabit, fetchUserHabits, updateHabit } from '../CRUD/habitOperations.js';
-import { returnError } from '../app.js';
+import { returnError } from '../utils/utils.js';
 import { getStats } from '../CRUD/statistics.js';
 
 const habitRouter = express.Router();

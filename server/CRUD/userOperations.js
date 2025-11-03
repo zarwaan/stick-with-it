@@ -1,13 +1,6 @@
 import { conn } from "../db/dbConn.js";
 import bcrypt from 'bcrypt';
-
-class Response {
-    constructor(success,message,result){
-        this.success = success
-        this.message = message
-        this.result = result
-    }
-}
+import { Response } from '../utils/utils.js'
 
 export async function register(username, firstName, lastName, password) {
     try{

@@ -19,14 +19,7 @@ import dayjs from "dayjs";
 import { convertToDatabaseStorableString, convertToEmoji } from "../../src/helpers/emojiManipulation.js";
 import { conn } from "../db/dbConn.js";
 import { checkIfLogged } from "./habitlogOperations.js";
-
-class Response {
-    constructor(success,message,result){
-        this.success = success
-        this.message = message
-        this.result = result
-    }
-}
+import { Response } from '../utils/utils.js'
 
 export class AuthError extends Error {
     constructor(message="Unauthorised!",code=401){

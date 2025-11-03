@@ -3,14 +3,7 @@ import { monthList, week } from "../../src/helpers/calendar.js";
 import { conn } from "../db/dbConn.js";
 import { fetchUserHabits } from "./habitOperations.js";
 import { title } from "motion/react-client";
-
-class Response {
-    constructor(success,message,result){
-        this.success = success
-        this.message = message
-        this.result = result
-    }
-}
+import { Response } from '../utils/utils.js'
 
 const getTimeInterval = (year,month,habitStart=null) => {
     let startDate, endDate

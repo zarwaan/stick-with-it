@@ -1,16 +1,7 @@
 import dayjs from "dayjs";
 import { conn } from "../db/dbConn.js";
 import { AuthError, authorise, fetchHabit } from "./habitOperations.js";
-
-class Response {
-    constructor(success,message,result){
-        this.success = success
-        this.message = message
-        this.result = result
-    }
-}
-
-// {  code,errno,sql,sqlState,sqlMessage }
+import { Response } from '../utils/utils.js'
 
 export async function logHabit(habitId, userId){
     try{
