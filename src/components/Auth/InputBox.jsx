@@ -1,7 +1,7 @@
 import { Eye, EyeOff } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-export default function InputBox({cred, type, setCreds, placeholder, value}) {
+export default function InputBox({cred, type, setCreds, placeholder, value, disabled = false}) {
     const ref = useRef(null);
     const [inputType, setInputType] = useState(type);
     const [showPassword, setShowPassword] = useState(false);
@@ -21,6 +21,7 @@ export default function InputBox({cred, type, setCreds, placeholder, value}) {
     return (
         <div className="flex w-full flex-center relative">
             <input type={inputType} ref={ref}
+            disabled={disabled}
             className=" w-8/10 rounded-lg bg-white p-1 pl-2 pr-2"
             placeholder={placeholder}
             onChange={handleChange}

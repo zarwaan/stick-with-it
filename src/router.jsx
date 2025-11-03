@@ -7,6 +7,7 @@ import Error404 from './components/ErrorPages/Error404.jsx'
 import Profile from './components/Profile/Profile.jsx'
 import NewHabit from './components/NewHabit/NewHabit.jsx'
 import ProtectedRoute from './components/ErrorPages/ProtectedRoute.jsx'
+import ForgotPassword from './components/Auth/ForgotPassword.jsx'
 
 export const router = createBrowserRouter([
 	{
@@ -24,6 +25,10 @@ export const router = createBrowserRouter([
 			{
 				path: 'register',
 				element: <Register></Register>
+			},
+			{
+				path: 'forgot-password',
+				element: <ForgotPassword />
 			},
 			{
 				element: <ProtectedRoute></ProtectedRoute>,
