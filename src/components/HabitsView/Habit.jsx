@@ -61,7 +61,7 @@ export default function Habit({habit}) {
     const logHabit = async () => {
         try{
             const {response, result} = await fetchRequest(
-                'log-habit',
+                'logs',
                 JSON.stringify({
                     habitId: habit.habit_id
                 })

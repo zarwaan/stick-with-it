@@ -85,7 +85,7 @@ export default function DateView() {
     const [remaining, setRemaining] = useState(null)
     // const completed = []; const remaining = [];
     const {data:comp, isLoading, error, fetchData:fetchComp} = useFetch(
-        `/user/logs?date=${date}&month=${month}&year=${year}`,
+        `/logs?date=${date}&month=${month}&year=${year}`,
         {method: 'GET',credentials: 'include'},
         false
     );

@@ -9,6 +9,7 @@ import { checkIfLogged, getHabitLogs, getHabitsLoggedOnDay, logHabit } from './C
 import { getStats } from './CRUD/statistics.js';
 import habitRouter from './routes/habitRouter.js';
 import usersRouter from './routes/usersRouter.js';
+import logsRouter from './routes/logsRouter.js';
 
 const app = express();
 app.use(express.json());
@@ -331,59 +332,63 @@ export function returnError(err,res){
     return res.status(500).json(err)
 }
 
-app.post('/log-habit',async (req,res) => {
-    try{
-        const {userId} = req.session.user || -1;
-        const {habitId} = req.body;
+///// logs /////
 
-        const response = await logHabit(habitId, userId);
-        if(response.success){
-            return res.status(200).json(response)
-        }
-        else{
-            return res.status(409).json(response)
-        }
-    }
-    catch(err){
-        console.log(err)
-        returnError(err,res)
-    }
-})
+app.use('/logs',logsRouter);
 
-app.post('/check-logs', async (req, res) => {
-    try{
-        const {habitId} = req.body;
-        const response = await checkIfLogged(habitId)
-        if(response.success){
-            return res.status(200).json({logged: response.result.logged})
-        }
-        else{ //how
-            return res.status(500).json(response)
-        }
-    }
-    catch(err){
-        console.log(err)
-        returnError(err,res)
-    }
-})
+// app.post('/log-habit',async (req,res) => {
+//     try{
+//         const {userId} = req.session.user || -1;
+//         const {habitId} = req.body;
 
-app.post('/get-logs',async (req,res) => {
-    try{
-        const {habitId} = req.body;
+//         const response = await logHabit(habitId, userId);
+//         if(response.success){
+//             return res.status(200).json(response)
+//         }
+//         else{
+//             return res.status(409).json(response)
+//         }
+//     }
+//     catch(err){
+//         console.log(err)
+//         returnError(err,res)
+//     }
+// })
 
-        const response = await getHabitLogs(habitId);
-        if(response.success){
-            return res.status(200).json(response)
-        }
-        else{
-            return res.status(409).json(response)
-        }
-    }
-    catch(err){
-        console.log(err)
-        returnError(err,res)
-    }
-})
+// app.post('/check-logs', async (req, res) => {
+//     try{
+//         const {habitId} = req.body;
+//         const response = await checkIfLogged(habitId)
+//         if(response.success){
+//             return res.status(200).json({logged: response.result.logged})
+//         }
+//         else{ //how
+//             return res.status(500).json(response)
+//         }
+//     }
+//     catch(err){
+//         console.log(err)
+//         returnError(err,res)
+//     }
+// })
+
+// app.post('/get-logs',async (req,res) => {
+//     try{
+//         const {habitId} = req.body;
+
+//         const response = await getHabitLogs(habitId);
+//         if(response.success){
+//             return res.status(200).json(response)
+//         }
+//         else{
+//             return res.status(409).json(response)
+//         }
+//     }
+//     catch(err){
+//         console.log(err)
+//         returnError(err,res)
+//     }
+// })
 
 class Response {
     constructor(success,message,result){
@@ -413,20 +418,20 @@ class Response {
 //     }
 // })
 
-app.get('/user/logs',async (req, res) => {
-    try {
-        const {userId} = req.session.user
-        // const userId = 8 //only for testing
-        const date = req.query.date || null;
-        const month = req.query.month || null;
-        const year = req.query.year || null;
+// app.get('/user/logs',async (req, res) => {
+//     try {
+//         const {userId} = req.session.user
+//         // const userId = 8 //only for testing
+//         const date = req.query.date || null;
+//         const month = req.query.month || null;
+//         const year = req.query.year || null;
         
-        const response = await getHabitsLoggedOnDay(date, month, year, userId)
-        return res.status(200).json(response)
-    }
-    catch(err){
-        returnError(err,res)
-    }
-})
+//         const response = await getHabitsLoggedOnDay(date, month, year, userId)
+//         return res.status(200).json(response)
+//     }
+//     catch(err){
+//         returnError(err,res)
+//     }
+// })
 
 app.listen(port, () => console.log(`Server running on http://localhost:${port}`));
