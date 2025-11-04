@@ -18,6 +18,7 @@ export default function Register() {
         firstName: "",
         lastName: "",
         username: "",
+        email: "",
         password: "",
         rePassword: "",
     });
@@ -81,6 +82,7 @@ export default function Register() {
                 <InputBox cred={"firstName"} type={"text"} setCreds={setCreds} placeholder={"First Name"} value={creds.firstName}></InputBox>
                 <InputBox cred={"lastName"} type={"text"} setCreds={setCreds} placeholder={"Last Name (Optional)"} value={creds.lastName}></InputBox>
                 <InputBox cred={"username"} type={"text"} setCreds={setCreds} placeholder={"Username"} value={creds.username}></InputBox>
+                <InputBox cred={"email"} type={"email"} setCreds={setCreds} placeholder={"Email address"} value={creds.email}></InputBox>
                 <InputBox cred={"password"} type={"password"} setCreds={setCreds} placeholder={"Password"} value={creds.password}></InputBox>
                 <InputBox cred={"rePassword"} type={"password"} setCreds={setCreds} placeholder={"Re-enter password"} value={creds.rePassword}></InputBox>
                 {

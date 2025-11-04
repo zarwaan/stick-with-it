@@ -3,7 +3,8 @@ export const createUsersTable = `CREATE TABLE IF NOT EXISTS users(
     username varchar(22) NOT NULL UNIQUE,
     first_name varchar(50) NOT NULL,
     last_name varchar(50),
-    password varchar(255) NOT NULL
+    password varchar(255) NOT NULL,
+    email varchar(50) NOT NULL
 )`;
 
 export const createHabitsTable = `CREATE TABLE IF NOT EXISTS habits(

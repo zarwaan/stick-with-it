@@ -2,11 +2,11 @@ import { conn } from "../db/dbConn.js";
 import bcrypt from 'bcrypt';
 import { Response } from '../utils/utils.js'
 
-export async function register(username, firstName, lastName, password) {
+export async function register(username, firstName, lastName, email, password) {
     try{
         const [res] = await conn.query(
-            "Insert into users(username, first_name, last_name, password) values(?,?,?,?)",
-            [username, firstName, lastName, password]
+            "Insert into users(username, first_name, last_name, email, password) values(?,?,?,?,?)",
+            [username, firstName, lastName, email, password]
         );
 
         return new Response(true,"Inserted successfully!",res)

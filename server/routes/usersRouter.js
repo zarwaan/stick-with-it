@@ -41,9 +41,9 @@ usersRouter.post('/logout',(req,res) => {
 
 usersRouter.post('/', async (req, res) => {
     try{
-        const {username, password, firstName, lastName} = req.body;
+        const {username, password, firstName, lastName, email} = req.body;
         const hashedPassword = await bcrypt.hash(password,10);
-        const response = await register(username,firstName,lastName,hashedPassword);
+        const response = await register(username,firstName,lastName,email,hashedPassword);
         req.session.user = {
             userId: response.result.insertId,
             username: username
