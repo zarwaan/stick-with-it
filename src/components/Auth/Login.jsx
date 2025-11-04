@@ -79,7 +79,7 @@ export default function Login() {
             </form>
             <div className="flex flex-col gap-1 w-9/10 m-auto mt-4">
                 <AuthLink pre={"New here?"} linkName={"Register now!"} linkTo={'/register'}></AuthLink>
-                <AuthLink pre={"Forgot your password?"} linkName={"Set a new one!"} linkTo={'/forgot-password'}></AuthLink>
+                <AuthLink pre={"Forgot your password?"} linkName={"Set a new one!"} linkTo={'/reset-password'}></AuthLink>
             </div>
         </AuthLayout>
     )

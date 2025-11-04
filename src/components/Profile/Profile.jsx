@@ -67,7 +67,7 @@ export default function Profile() {
         }
     }
 
-    const changePassRequest = () => {};
+    const changePassRequest = () => {navigate('/reset-password')};
     
     const deleteAccountRequest = async () => {
         if(confirm("Are you sure you want to delete your account?"))
@@ -129,7 +129,6 @@ export default function Profile() {
                 setErrorMessage={setErrorMessage}></UpdateDetailsButton>
                 {
                     [
-                        ["changePass",changePassRequest],
                         ["logout",logoutRequest],
                         ["delete",deleteAccountRequest]
                     ]

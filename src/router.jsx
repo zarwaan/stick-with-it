@@ -27,7 +27,7 @@ export const router = createBrowserRouter([
 				element: <Register></Register>
 			},
 			{
-				path: 'forgot-password',
+				path: 'reset-password',
 				element: <ForgotPassword />
 			},
 			{
