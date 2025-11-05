@@ -6,6 +6,7 @@ import { AuthError } from './CRUD/habitOperations.js';
 import habitRouter from './routes/habitRouter.js';
 import usersRouter from './routes/usersRouter.js';
 import logsRouter from './routes/logsRouter.js';
+import authRouter from './routes/authRouter.js';
 
 const app = express();
 app.use(express.json());
@@ -44,5 +45,7 @@ app.use('/users', usersRouter);
 app.use('/habits', habitRouter)
 
 app.use('/logs',logsRouter);
+
+app.use('/auth',authRouter)
 
 app.listen(port, () => console.log(`Server running on http://localhost:${port}`));

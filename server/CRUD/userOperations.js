@@ -98,3 +98,21 @@ export async function updateUserDetails(userId, username, firstName, lastName){
         throw new Response(false,"Error inserting values!",null)
     }
 }
+
+export async function getEmailFromUsername(username){
+    try{
+        const [res] = await conn.query(
+            "Select email from users where username = ?",
+            [username]
+        );
+        if(res.length===0){
+            return new Response(false,"User doesn't exist!",null)
+        }
+        else{
+            return new Response(true,"Found successfully",res[0])
+        }
+    }
+    catch(err){
+        throw new Response(false,"Database fetch error",null)
+    }
+}

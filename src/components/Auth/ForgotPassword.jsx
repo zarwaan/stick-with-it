@@ -7,33 +7,81 @@ import SubmitButton from "./SubmitButton";
 import Error from "../utils/Error";
 import { AnimatePresence, motion } from "motion/react";
 import { useAuthContext } from "../../providers/AuthProvider";
+import useFetch from "../../hooks/useFetch";
 
 export default function ForgotPassword({}) {
     const navigate = useNavigate();
     const [errorMessage, setErrorMessage] = useState(null);
     const [creds, setCreds] = useState({
         username: '',
+        email: '',
         otp: '',
         pass: '',
         repass: ''
     });
     const [emailSent, setEmailSent] = useState(false);
     const [otpVerified, setOtpVerified] = useState(false);
+
+    const {data: emailData, isLoading:sendEmailLoading, error:sendEmailError, fetchData:sendEmailRequest} = useFetch(
+        '/auth/send-otp',
+        {
+            method: 'POST',
+            credentials: 'include',
+            body: JSON.stringify({username: creds.username})
+        },
+        false
+    )
+    const {data:otpData, isLoading:otpLoading, error:otpError, fetchData:verifyOtp} = useFetch('/auth/verify-otp',{
+        method: "POST",
+        credentials: 'include',
+        body: JSON.stringify({otp: creds.otp}),
+    },
+false);
+
     const sendEmail = async (e) => {
-        if(e) e.preventDefault();
+        e.preventDefault();
         console.log(creds.username);
-        setEmailSent(true);
+        await sendEmailRequest();
     }
 
-    const checkOtp = e => {
+    const checkOtp = async e => {
         e.preventDefault();
-        setOtpVerified(true);
+        await verifyOtp();
         console.log(creds.otp);
     }
 
     const changePassRequest = async () => {
         return true;
     }
+
+    useEffect(() => {
+        if(sendEmailError)
+            setErrorMessage(sendEmailError.message)
+    },[sendEmailError])
+
+    useEffect(() => {
+        if(emailData)
+            if(emailData.success)
+            {
+                setCreds(prev => ({
+                    ...prev,
+                    email: emailData.email
+                }))
+                setEmailSent(true)
+                setErrorMessage(null)
+            }
+    },[emailData])
+
+    useEffect(() => {
+        if(otpError) setErrorMessage(otpError.message)
+    },[otpError])
+
+    useEffect(() => {
+        if(otpData && otpData.success){
+            setOtpVerified(true)
+            setErrorMessage(null)
+        }
+    },[otpData])
 
     const complete = async (e) => {
         e.preventDefault();
@@ -56,7 +104,7 @@ export default function ForgotPassword({}) {
                     "A mail containing an OTP to reset your password has been sent on your associated email id"
                 }
             />
-            <form className="flex flex-col gap-4" onSubmit={emailSent ? otpVerified ? complete : checkOtp : sendEmail}>
+            <form className="flex flex-col gap-4" onSubmit={(otpLoading || sendEmailLoading) ? ()=>{} : emailSent ? otpVerified ? complete : checkOtp : sendEmail}>
                 <InputBox 
                     cred={'username'}
                     setCreds={setCreds}
@@ -122,7 +170,7 @@ export default function ForgotPassword({}) {
                     errorMessage && 
                     <Error errorText={errorMessage}></Error>
                 }
-                <SubmitButton text={emailSent ? otpVerified ? "Reset" : "Verify" : "Send email"} />
+                <SubmitButton text={(otpLoading || sendEmailLoading) ? "Loading..." : emailSent ? otpVerified ? "Reset" : "Verify" : "Send email"} />
             </form>
         </AuthLayout>
     )
