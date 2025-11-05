@@ -116,3 +116,19 @@ export async function getEmailFromUsername(username){
         throw new Response(false,"Database fetch error",null)
     }
 }
+
+export async function updatePassword(username, password){
+    try {
+        const [res] = await conn.query(
+            "Update users set password=? where username=?",
+            [password, username]
+        );
+        if(res.affectedRows===0)
+            return new Response(true,"User doesn't exist!",null)
+        else
+            return new Response(true,"Updated successfully",res)
+    } 
+    catch (error) {
+        throw new Response(false,"Error inserting values!",null)
+    }
+}

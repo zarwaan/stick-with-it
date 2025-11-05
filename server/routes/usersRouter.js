@@ -1,5 +1,5 @@
 import express from 'express'
-import { deleteUser, getUserDetails, login, register, updateUserDetails } from '../CRUD/userOperations.js';
+import { deleteUser, getUserDetails, login, register, updatePassword, updateUserDetails } from '../CRUD/userOperations.js';
 import bcrypt from 'bcrypt';
 
 const usersRouter = express.Router();
@@ -113,6 +113,25 @@ usersRouter.patch('/user', async (req, res) => {
     }
     catch(err){
         console.log("\ndetails update error")
+        console.log(err)
+        return res.status(500).json(err)
+    }
+})
+
+usersRouter.patch('/user/password', async (req, res) => {
+    try{
+        const {username, password} = req.body;
+        const hash = await bcrypt.hash(password, 10)
+        const response = await updatePassword(username, hash);
+        if(response.success){
+            console.log("Updated details!")
+            return res.status(200).json(response)
+        }
+        else{
+            return res.status(400).json(response)
+        }
+    }
+    catch(err){
         console.log(err)
         return res.status(500).json(err)
     }

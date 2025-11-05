@@ -51,7 +51,26 @@ false);
     }
 
     const changePassRequest = async () => {
-        return true;
+        try{
+            const response = await fetch(`${import.meta.env.VITE_API_URL_ROOT}/users/user/password`,{
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({username: creds.username, password: creds.pass})
+            });
+            const result = await response.json();
+            if(response.ok)
+                return true
+            else
+            {
+                setErrorMessage(result.message)
+            }
+        }
+        catch(err){
+            console.error(err)
+        }
+        return false;
     }
 
     useEffect(() => {
