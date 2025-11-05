@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  client: 
+    build: 
+      context: .
+      dockerfile: Dockerfile.client
+    container_name: stick-with-it-client
+    ports:
+      - "5173:5173"
+    env_file:
+      - .env.development
+    depends_on:
+      - server
+    volumes:
+      - .:/stickwithit
+      - /stickwithit/node_modules
+
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+    container_name: stick-with-it-server
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.development
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/stickwithit
+      - /stickwithit/node_modules
+    environment:
+      # defaults
+      DB_HOST: db
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: stickwithit
+
+  db:
+    image: mysql:8
+    container_name: stick-with-it-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: stickwithit
+    # ports:
+    #   - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+
+volumes:
+  db_data:

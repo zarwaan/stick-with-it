@@ -1,0 +1,12 @@
+FROM node:18
+
+WORKDIR /stickwithit
+
+COPY package*.json ./
+RUN npm install
+
+COPY server ./server
+COPY .env.development ./.env
+
+EXPOSE 3000
+CMD [ "sh", "-c", "node server/db/init.js && npm run server" ]
