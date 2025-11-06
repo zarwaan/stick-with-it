@@ -27,6 +27,39 @@ A comprehensive and intuitive web application that allows users to track and mon
 
 ## ⚙️ Installation & Setup
 
+## Initial steps
+1. Navigate to your preferred folder and clone the repository
+    ```shell
+    git clone https://github.com/zarwaan/stick-with-it.git
+    cd stick-with-it
+    ```
+
+2. Set up a gmail [app password](https://support.google.com/mail/answer/185833?hl=en) to use for the mailing service
+
+3. Fill out `.env.example` file at the root level plugging in your env variables as instructed and rename it to `.env.development`
+
+## With Docker 🐋
+
+### Prerequisites
+Ensure the following are installed on your system:
+1. [Docker](https://www.docker.com/products/docker-desktop/)
+
+### Steps
+
+1. Build the app
+    ```shell
+    docker compose up --build
+    ```
+
+2. Run subsequently
+    ```shell
+    docker compose up
+    ```
+
+3. Open browser and navigate to [http://localhost:5173/](http://localhost:5173/)
+
+## Without Docker
+
 ### Prerequisites
 Ensure the following are installed on your system:
 1. [Node.js](https://nodejs.org/)
@@ -34,46 +67,29 @@ Ensure the following are installed on your system:
 3. [MySQL Workbench (optional)](https://dev.mysql.com/downloads/workbench/)
 
 ### Steps
-1. Navigate to your preferred folder and clone the repository
-    ```shell
-    git clone https://github.com/zarwaan/stick-with-it.git
-    cd stick-with-it
-    ```
 
-2. Install dependencies
+1. Install dependencies
     ```shell
     npm install
     ```
 
-3. [Create a MySQL Connection Instance](https://dev.mysql.com/doc/mysql-getting-started/en/)
-
-4. Create a `.env.development` file at root level with the following environment variables
+2. Create a [MySQL Connection Instance](https://dev.mysql.com/doc/mysql-getting-started/en/)
+    
+3. Initialise the database
     ```sh
-    PORT = "3000" # can change port to liking
-    VITE_API_URL_ROOT = "http://localhost:3000" # change port if changed
-    SESSION_SECRET = # your session secret
-    CLIENT_URL = "http://localhost:5173" # vite frontend url
+    node server/db/init.js
+    ```
 
-    # DATABASE VARIABLES
-    DB_HOST = # your mysql hostname
-    DB_USER = # your mysql user
-    DB_PASSWORD = # your mysql password
-    DB_NAME = # your database name
-    ```
-5. Initialise the database by running these commands
-    ```sh
-    node server/db/createDb.js
-    node server/db/createTables.js
-    ```
-6. Start the server
+4. Start the server
     - Frontend:
         ```sh
         npm run client
         ```
     - Backend:
         ```sh
-        npm run devserver
+        npm run server
         ```
-7. Open browser and navigate to [http://localhost:5173/](http://localhost:5173/) (or your client url if changed)
+
+5. Open browser and navigate to [http://localhost:5173/](http://localhost:5173/)
 
 ## Created and maintained by Zarwaan Shroff
